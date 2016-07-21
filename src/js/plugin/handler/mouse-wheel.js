@@ -6,6 +6,8 @@
  * @description 描述该类...
  */
 'use strict';
+
 module.exports = function (element) {
+  var instance = instances.get(element);
 
 };

@@ -9,11 +9,12 @@
 
 var util = require('../lib/util');
 var config = require('./config');
-var Observer = require('../lib/observer');
+var EventManager = require('../lib/event-manager');
 var guid = require('../lib/guid');
 var helper = require('../lib/helper');
 var instances = {};
 var $ = jQuery;
+
 function Instance(element) {
 	var instance = this;
 	var $element = $(element);
@@ -23,13 +24,19 @@ function Instance(element) {
 		containerHeight: null,
 		contentWidth: null,
 		contentHeight: null,
-		vertical: -1,//-1顶部,1底部,0中间
-		horizontal: -1,//-1左边，1右边，0中间
-		maxScroll: {x: 0, y: 0},
-		currentScroll: {x: 0, y: 0}
+		vertical: -1, //-1顶部,1底部,0中间
+		horizontal: -1, //-1左边，1右边，0中间
+		maxScroll: {
+			x: 0,
+			y: 0
+		},
+		currentScroll: {
+			x: 0,
+			y: 0
+		}
 	});
 	/*检测是否是反向滚动*/
-	instance.isNegativeScroll = (function () {
+	instance.isNegativeScroll = (function() {
 		var originalScrollLeft = element.scrollLeft;
 		var result;
 		element.scrollLeft = -1;
@@ -38,7 +45,7 @@ function Instance(element) {
 		return result;
 	})();
 	instance.negativeScrollAdjustment = instance.isNegativeScroll ? element.scrollWidth - element.clientWidth : 0;
-	instance.event = new Observer();
+	instance.event = new EventManager();
 	instance.ownerDocument = element.ownerDocument || document;
 
 	$element.wrapInner('<div class="ss-content" tabindex="0"></div>');
@@ -46,10 +53,10 @@ function Instance(element) {
 	instance.barXRail = $('<div class="ss-scrollbar-x-rail"  tabindex="0"></div>')
 		.appendTo($element)
 		.on({
-			focus: function () {
+			focus: function() {
 				$(this).addClass('ss-focus');
 			},
-			blur: function () {
+			blur: function() {
 				$(this).removeClass('ss-focus');
 			}
 		});
@@ -61,10 +68,10 @@ function Instance(element) {
 	instance.barYRail = $('<div class="ss-scrollbar-y-rail" tabindex="0"></div>')
 		.appendTo($element)
 		.on({
-			focus: function () {
+			focus: function() {
 				$(this).addClass('ss-focus');
 			},
-			blur: function () {
+			blur: function() {
 				$(this).removeClass('ss-focus');
 			}
 		});
@@ -86,16 +93,16 @@ function removeId(element) {
 	element.removeAttribute('data-ss-id');
 }
 
-exports.add = function (element) {
+exports.add = function(element) {
 	var newId = guid();
 	setId(element, newId);
 	instances[newId] = new Instance(element);
 	return instances[newId];
 };
 
-exports.remove = function (element) {
+exports.remove = function(element) {
 	var instance = instances[getId(element)];
-	$(element).find('.ss-content').first().unwrap();//移除插入的content包裹元素
+	$(element).find('.ss-content').first().unwrap(); //移除插入的content包裹元素
 	instance.barX.remove();
 	instance.barY.remove();
 	instance.barXRail.remove();
@@ -104,6 +111,6 @@ exports.remove = function (element) {
 	removeId(element);
 };
 
-exports.get = function (element) {
+exports.get = function(element) {
 	return instances[getId(element)];
 };

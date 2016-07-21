@@ -74,6 +74,7 @@ body.scrolling {
 	transition: background-color .2s linear, height .2s linear, width .2s ease-in-out, border-radius .2s ease-in-out;
 	bottom: 2px;
 	height: 6px;
+	border:none;
 }
 
 .ss-container > .ss-scrollbar-x-rail:hover > .ss-scrollbar-x, .ss-container > .ss-scrollbar-x-rail:active > .ss-scrollbar-x {
@@ -98,6 +99,7 @@ body.scrolling {
 	transition: background-color .2s linear, height .2s linear, width .2s ease-in-out, border-radius .2s ease-in-out;
 	right: 2px;
 	width: 6px;
+	border:none;
 }
 
 .ss-container > .ss-scrollbar-y-rail:hover > .ss-scrollbar-y, .ss-container > .ss-scrollbar-y-rail:active > .ss-scrollbar-y {

@@ -84,10 +84,8 @@ gulp.task('js:min', ['clean:js:min'], function () {
 				} else {
 					path.basename = path.basename + '.min';
 				}
-			})
-		)
-			.
-			pipe(gulp.dest('./dist/js'))
+			}))
+			.pipe(gulp.dest('./dist/js'))
 			.pipe(connect.reload());
 	});
 	return stream.merge.apply(null, tasks);
@@ -129,8 +127,8 @@ gulp.task('css:min', ['clean:css:min'], function () {
 });
 
 gulp.task('build', ['js', 'js:min', 'css', 'css:min']);
-
-gulp.task('connect', ['build'], function () {
+gulp.task('dev', ['js','css']);
+gulp.task('connect', ['dev'], function () {
 	connect.server({
 		root: __dirname,
 		livereload: true
@@ -150,4 +148,5 @@ gulp.task('compress', function () {
 		.pipe(gulp.dest('./dist'));
 });
 
-gulp.task('default', ['lint', 'build']);
+gulp.task('default', ['lint', 'dev']);
+gulp.task('release',['lint','build']);

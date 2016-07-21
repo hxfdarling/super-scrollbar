@@ -1,0 +1,150 @@
+body.scrolling {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	cursor: pointer;
+}
+
+.ss-container {
+	-ms-touch-action: none;
+	touch-action: none;
+	overflow: hidden !important;
+	-ms-overflow-style: none;
+	position: relative;
+}
+
+.ss-content {
+	display: inline-block;
+}
+
+@supports (-ms-overflow-style: none) {
+	.ss-container {
+		overflow: auto !important;
+	}
+}
+
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+	.ss-container {
+		overflow: auto !important;
+	}
+}
+
+.ss-container.ss-active-x > .ss-scrollbar-x-rail,
+.ss-container.ss-active-y > .ss-scrollbar-y-rail {
+	display: block;
+	background-color: transparent;
+}
+
+.ss-container.ss-in-scrolling {
+	pointer-events: none;
+}
+
+.ss-container.ss-in-scrolling.ss-x > .ss-scrollbar-x-rail {
+	background-color: #eee;
+	opacity: 0.9;
+}
+
+.ss-container.ss-in-scrolling.ss-x > .ss-scrollbar-x-rail > .ss-scrollbar-x {
+	background-color: #999;
+}
+
+.ss-container.ss-in-scrolling.ss-y > .ss-scrollbar-y-rail {
+	background-color: #eee;
+	opacity: 0.9;
+}
+
+.ss-container.ss-in-scrolling.ss-y > .ss-scrollbar-y-rail > .ss-scrollbar-y {
+	background-color: #999;
+}
+
+.ss-container > .ss-scrollbar-x-rail {
+	display: none;
+	position: absolute;
+	opacity: 0;
+	transition: background-color .2s linear, opacity .2s linear;
+	bottom: 0;
+	height: 15px;
+}
+
+.ss-container > .ss-scrollbar-x-rail > .ss-scrollbar-x {
+	position: absolute;
+	background-color: #aaa;
+	border-radius: 6px;
+	transition: background-color .2s linear, height .2s linear, width .2s ease-in-out, border-radius .2s ease-in-out;
+	bottom: 2px;
+	height: 6px;
+}
+
+.ss-container > .ss-scrollbar-x-rail:hover > .ss-scrollbar-x, .ss-container > .ss-scrollbar-x-rail:active > .ss-scrollbar-x {
+	height: 11px;
+}
+
+.ss-container > .ss-scrollbar-y-rail {
+	display: none;
+	position: absolute;
+	opacity: 0;
+	transition: background-color .2s linear, opacity .2s linear;
+	right: 0;
+	width: 15px;
+}
+
+.ss-container > .ss-scrollbar-y-rail > .ss-scrollbar-y {
+	position: absolute;
+	background-color: #aaa;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	transition: background-color .2s linear, height .2s linear, width .2s ease-in-out, border-radius .2s ease-in-out;
+	right: 2px;
+	width: 6px;
+}
+
+.ss-container > .ss-scrollbar-y-rail:hover > .ss-scrollbar-y, .ss-container > .ss-scrollbar-y-rail:active > .ss-scrollbar-y {
+	width: 11px;
+}
+
+.ss-container:hover.ss-in-scrolling {
+	pointer-events: none;
+}
+
+.ss-container:hover.ss-in-scrolling.ss-x > .ss-scrollbar-x-rail {
+	background-color: #eee;
+	opacity: 0.9;
+}
+
+.ss-container:hover.ss-in-scrolling.ss-x > .ss-scrollbar-x-rail > .ss-scrollbar-x {
+	background-color: #999;
+}
+
+.ss-container:hover.ss-in-scrolling.ss-y > .ss-scrollbar-y-rail {
+	background-color: #eee;
+	opacity: 0.9;
+}
+
+.ss-container:hover.ss-in-scrolling.ss-y > .ss-scrollbar-y-rail > .ss-scrollbar-y {
+	background-color: #999;
+}
+
+.ss-container:hover > .ss-scrollbar-x-rail,
+.ss-container:hover > .ss-scrollbar-y-rail {
+	opacity: 0.6;
+}
+
+.ss-container:hover > .ss-scrollbar-x-rail:hover {
+	background-color: #eee;
+	opacity: 0.9;
+}
+
+.ss-container:hover > .ss-scrollbar-x-rail:hover > .ss-scrollbar-x {
+	background-color: #999;
+}
+
+.ss-container:hover > .ss-scrollbar-y-rail:hover {
+	background-color: #eee;
+	opacity: 0.9;
+}
+
+.ss-container:hover > .ss-scrollbar-y-rail:hover > .ss-scrollbar-y {
+	background-color: #999;
+}

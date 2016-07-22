@@ -25,31 +25,31 @@ module.exports = function (element) {
 	instance.maxTop = Math.max(0, instance.contentHeight - instance.containerHeight);
 	instance.railYShow = instance.contentHeight > instance.containerHeight;
 	instance.railXShow = instance.contentWidth > instance.containerWidth;
-	var railOffset = 0, railSize, barSize;
+	var railSize, barSize;
 	var barXRail = instance.barXRail, barYRail = instance.barYRail;
 	if (instance.railXShow) {
 		$element.addClass('ss-active-x');
-		instance.railYShow && ( railOffset = barYRail.width() + parseInt(barYRail.css('margin-right')));
-		railSize = instance.containerWidth - railOffset;
+		instance.barXRail.width(instance.containerWidth);
+		railSize = instance.containerWidth;
 		barSize = Math.max(instance.containerWidth / instance.contentWidth * railSize, instance.config.barMinSize);
 		instance.barX.width(barSize);
 		instance.barXWidth = barSize;
-		instance.railXRatio = Math.max((railSize - barSize) / (instance.contentWidth - instance.containerWidth), 1);
-		updateScroll(element, 'left', 0);
+		instance.railXRatio = Math.max((instance.contentWidth - instance.containerWidth) / (railSize - barSize), 1);
+		//updateScroll(element, 'left', 0);
 	} else {
 		$element.removeClass('ss-active-x');
 	}
 
 	if (instance.railYShow) {
 		$element.addClass('ss-active-y');
-		instance.railXShow && ( railOffset = barXRail.height() + parseInt(barXRail.css('margin-bottom')));
-		railSize = instance.containerHeight - railOffset;
+		instance.barYRail.height(instance.containerHeight);
+		railSize = instance.containerHeight;
 		barSize = Math.max(instance.containerHeight / instance.contentHeight * railSize, instance.config.barMinSize);
 		instance.barY.height(barSize);
 		instance.barYHeight = barSize;
 
-		instance.railYRatio = Math.max((railSize - barSize) / (instance.contentHeight - instance.containerHeight), 1);
-		updateScroll(element, 'top', 0);
+		instance.railYRatio = Math.max((instance.contentHeight - instance.containerHeight) / (railSize - barSize), 1);
+		//updateScroll(element, 'top', 0);
 	} else {
 		$element.removeClass('ss-active-y');
 	}

@@ -41,9 +41,9 @@ function Instance(element) {
 	instance.negativeScrollAdjustment = instance.isNegativeScroll ? element.scrollWidth - element.clientWidth : 0;
 	instance.ownerDocument = element.ownerDocument || document;
 
-	$element.wrapInner('<div class="ss-content" tabindex="0"></div>');
+	$element.wrapInner('<div class="ss-content"></div>');
 	/*创建横向滚动条*/
-	instance.barXRail = $('<div class="ss-scrollbar-x-rail"  tabindex="0"></div>')
+	instance.barXRail = $('<div class="ss-scrollbar-x-rail"></div>')
 		.appendTo($element)
 		.on({
 			focus: function () {
@@ -59,7 +59,7 @@ function Instance(element) {
 	instance.railXShow = false;
 	instance.barXWidth = null;
 	/*创建垂直滚动条*/
-	instance.barYRail = $('<div class="ss-scrollbar-y-rail" tabindex="0"></div>')
+	instance.barYRail = $('<div class="ss-scrollbar-y-rail" ></div>')
 		.appendTo($element)
 		.on({
 			focus: function () {
@@ -69,11 +69,14 @@ function Instance(element) {
 				$(this).removeClass('ss-focus');
 			}
 		});
-	instance.barY = $('<div class="ss-scrollbar-y"></div>').appendTo(instance.barXRail);
+	instance.barY = $('<div class="ss-scrollbar-y"></div>').appendTo(instance.barYRail);
 	instance.railYHeight = null;
 	instance.railYRatio = null;
 	instance.railYShow = false;
 	instance.barYWidth = null;
+	$element.on('scroll',function(){
+
+	})
 }
 
 function getId(element) {

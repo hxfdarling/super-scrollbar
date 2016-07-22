@@ -107,16 +107,23 @@ module.exports = function (element, axis, value, animate) {
 	if (axis === 'left' && value > lastLeft) {
 		element.dispatchEvent(rightEvent);
 	}
-	console.log(value);
 	if (axis === 'top') {
 		element.scrollTop = lastTop = value;
 		instance.barY.css('top', value / instance.railYRatio);
+		instance.barYRail.css('top',value );
+
+		instance.barXRail.css('bottom',-value);
+
 		element.dispatchEvent(yEvent);
 	}
 
 	if (axis === 'left') {
 		element.scrollLeft = lastLeft = value;
 		instance.barX.css('left', value / instance.railXRatio);
+		instance.barXRail.css('left',value);
+
+		instance.barYRail.css('right',-value);
+
 		element.dispatchEvent(xEvent);
 	}
 };

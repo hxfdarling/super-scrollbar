@@ -12,6 +12,7 @@ body.scrolling {
 	overflow: hidden !important;
 	-ms-overflow-style: none;
 	position: relative;
+	-webkit-tap-highlight-color: transparent;
 }
 
 .ss-content {
@@ -65,6 +66,8 @@ body.scrolling {
 	transition: background-color .2s linear, opacity .2s linear;
 	bottom: 0;
 	height: 15px;
+	cursor: pointer;
+	left:0;
 }
 
 .ss-container > .ss-scrollbar-x-rail > .ss-scrollbar-x {
@@ -74,7 +77,7 @@ body.scrolling {
 	transition: background-color .2s linear, height .2s linear, width .2s ease-in-out, border-radius .2s ease-in-out;
 	bottom: 2px;
 	height: 6px;
-	border:none;
+	border: none;
 }
 
 .ss-container > .ss-scrollbar-x-rail:hover > .ss-scrollbar-x, .ss-container > .ss-scrollbar-x-rail:active > .ss-scrollbar-x {
@@ -88,6 +91,9 @@ body.scrolling {
 	transition: background-color .2s linear, opacity .2s linear;
 	right: 0;
 	width: 15px;
+	cursor: pointer;
+	top:0;
+
 }
 
 .ss-container > .ss-scrollbar-y-rail > .ss-scrollbar-y {
@@ -99,7 +105,7 @@ body.scrolling {
 	transition: background-color .2s linear, height .2s linear, width .2s ease-in-out, border-radius .2s ease-in-out;
 	right: 2px;
 	width: 6px;
-	border:none;
+	border: none;
 }
 
 .ss-container > .ss-scrollbar-y-rail:hover > .ss-scrollbar-y, .ss-container > .ss-scrollbar-y-rail:active > .ss-scrollbar-y {

@@ -35,7 +35,7 @@ xEndEvent.initEvent('ss-x-reach-end', true, true);
 yStartEvent.initEvent('ss-y-reach-start', true, true);
 yEndEvent.initEvent('ss-y-reach-end', true, true);
 
-module.exports = function (element, axis, value) {
+module.exports = function (element, axis, value, animate) {
 	if (typeof element === 'undefined') {
 		throw 'You must provide an element to the update-scroll function';
 	}
@@ -107,14 +107,16 @@ module.exports = function (element, axis, value) {
 	if (axis === 'left' && value > lastLeft) {
 		element.dispatchEvent(rightEvent);
 	}
-
+	console.log(value);
 	if (axis === 'top') {
 		element.scrollTop = lastTop = value;
+		instance.barY.css('top', value / instance.railYRatio);
 		element.dispatchEvent(yEvent);
 	}
 
 	if (axis === 'left') {
 		element.scrollLeft = lastLeft = value;
+		instance.barX.css('left', value / instance.railXRatio);
 		element.dispatchEvent(xEvent);
 	}
 };

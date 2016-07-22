@@ -10,100 +10,97 @@
 var instances = require('../instances');
 var update = require('../update');
 var updateScroll = require('../update-scroll');
-var helper = require('../lib/helper');
-
+var helper = require('../../lib/helper');
+var $ = require('../../lib/dom');
 function bindMouseScrollXHandler(element, instance) {
-    var currentLeft = null;
-    var currentPageX = null;
+	var currentLeft = null;
+	var currentPageX = null;
+	var $doc = $(instance.ownerDocument);
 
-    function updateScrollLeft(deltaX) {
-        var newLeft = currentLeft + (deltaX * instance.railXRatio);
-        var maxLeft = Math.max(0, instance.barXRail.getBoundingClientRect().left) + (instance.railXRatio * (instance.railXWidth - instance.barXWidth));
+	function updateScrollLeft(deltaX) {
+		var newLeft = currentLeft + (deltaX * instance.railXRatio);
+		var maxLeft = instance.maxLeft;
+		if (newLeft < 0) {
+			instance.currentLeft = 0;
+		} else if (newLeft > maxLeft) {
+			instance.currentLeft = maxLeft;
+		} else {
+			instance.currentLeft = newLeft;
+		}
+		updateScroll(element, 'left', instance.currentLeft);
+	}
 
-        if (newLeft < 0) {
-            instance.currentScroll.x = 0;
-        } else if (newLeft > maxLeft) {
-            instance.currentScroll.x = maxLeft;
-        } else {
-            instance.currentScroll.x = newLeft;
-        }
+	var mouseMoveHandler = function (e) {
+		updateScrollLeft(e.pageX - currentPageX);
+		update(element);
+		e.stopPropagation();
+		e.preventDefault();
+	};
 
-        var scrollLeft = helper.toInt(instance.currentScroll.x * (instance.contentWidth - instance.containerWidth) / (instance.containerWidth - (instance.railXRatio * instance.scrollbarXWidth))) - instance.negativeScrollAdjustment;
-        updateScroll(element, 'left', scrollLeft);
-    }
+	var mouseUpHandler = function () {
+		helper.stopScrolling(element, 'x');
+		$doc.off('mousemove', mouseMoveHandler);
+	};
+	var $barX = $(instance.barX);
+	$barX.on('mousedown', function (e) {
+		currentPageX = e.pageX;
+		currentLeft = $barX.position().left * instance.railXRatio;
+		helper.startScrolling(element, 'x');
+		$doc.on('mousemove', mouseMoveHandler);
+		$doc.one('mouseup', mouseUpHandler);
 
-    var mouseMoveHandler = function(e) {
-        updateScrollLeft(e.pageX - currentPageX);
-        update(element);
-        e.stopPropagation();
-        e.preventDefault();
-    };
+		e.stopPropagation();
+		e.preventDefault();
+	});
 
-    var mouseUpHandler = function() {
-        helper.stopScrolling(element, 'x');
-        instance.event.unbind(instance.ownerDocument, 'mousemove', mouseMoveHandler);
-    };
-
-    instance.event.bind(instance.barX, 'mousedown', function(e) {
-        currentPageX = e.pageX;
-        currentLeft = helper.toInt(dom.css(instance.barX, 'left')) * instance.railXRatio;
-        helper.startScrolling(element, 'x');
-
-        instance.event.bind(instance.ownerDocument, 'mousemove', mouseMoveHandler);
-        instance.event.once(instance.ownerDocument, 'mouseup', mouseUpHandler);
-
-        e.stopPropagation();
-        e.preventDefault();
-    });
 }
 
 function bindMouseScrollYHandler(element, instance) {
-    var currentTop = null;
-    var currentPageY = null;
+	var currentTop = null;
+	var currentPageY = null;
+	var $doc = $(instance.ownerDocument);
 
-    function updateScrollTop(deltaY) {
-        var newTop = currentTop + (deltaY * instance.railYRatio);
-        var maxTop = Math.max(0, instance.scrollbarYRail.getBoundingClientRect().top) + (instance.railYRatio * (instance.railYHeight - instance.scrollbarYHeight));
+	function updateScrollTop(deltaY) {
+		var newTop = currentTop + (deltaY * instance.railYRatio);
+		var maxTop = instance.maxTop;
 
-        if (newTop < 0) {
-            instance.scrollbarYTop = 0;
-        } else if (newTop > maxTop) {
-            instance.scrollbarYTop = maxTop;
-        } else {
-            instance.scrollbarYTop = newTop;
-        }
+		if (newTop < 0) {
+			instance.currentTop = 0;
+		} else if (newTop > maxTop) {
+			instance.currentTop = maxTop;
+		} else {
+			instance.currentTop = newTop;
+		}
+		updateScroll(element, 'top', instance.currentTop);
+	}
 
-        var scrollTop = helper.toInt(instance.scrollbarYTop * (instance.contentHeight - instance.containerHeight) / (instance.containerHeight - (instance.railYRatio * instance.scrollbarYHeight)));
-        updateScroll(element, 'top', scrollTop);
-    }
+	var mouseMoveHandler = function (e) {
+		updateScrollTop(e.pageY - currentPageY);
+		update(element);
+		e.stopPropagation();
+		e.preventDefault();
+	};
 
-    var mouseMoveHandler = function(e) {
-        updateScrollTop(e.pageY - currentPageY);
-        updateGeometry(element);
-        e.stopPropagation();
-        e.preventDefault();
-    };
+	var mouseUpHandler = function () {
+		helper.stopScrolling(element, 'y');
+		$doc.off('mousemove', mouseMoveHandler);
+	};
 
-    var mouseUpHandler = function() {
-        helper.stopScrolling(element, 'y');
-        instance.event.unbind(instance.ownerDocument, 'mousemove', mouseMoveHandler);
-    };
+	var $barY = $(instance.barY);
 
-    instance.event.bind(instance.scrollbarY, 'mousedown', function(e) {
-        currentPageY = e.pageY;
-        currentTop = helper.toInt(dom.css(instance.scrollbarY, 'top')) * instance.railYRatio;
-        helper.startScrolling(element, 'y');
-
-        instance.event.bind(instance.ownerDocument, 'mousemove', mouseMoveHandler);
-        instance.event.once(instance.ownerDocument, 'mouseup', mouseUpHandler);
-
-        e.stopPropagation();
-        e.preventDefault();
-    });
+	$barY.on('mousedown', function (e) {
+		currentPageY = e.pageY;
+		currentTop = $barY.position().top * instance.railYRatio;
+		helper.startScrolling(element, 'y');
+		$doc.on('mousemove', mouseMoveHandler);
+		$doc.one('mouseup', mouseUpHandler);
+		e.stopPropagation();
+		e.preventDefault();
+	});
 }
 
-module.exports = function(element) {
-    var instance = instances.get(element);
-    bindMouseScrollXHandler(element, instance);
-    bindMouseScrollYHandler(element, instance);
+module.exports = function (element) {
+	var instance = instances.get(element);
+	bindMouseScrollXHandler(element, instance);
+	bindMouseScrollYHandler(element, instance);
 };

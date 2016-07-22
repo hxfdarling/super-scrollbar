@@ -77,4 +77,4 @@ DOM.queryChildren = function (element, selector) {
 	});
 };
 
-module.exports = DOM;
+module.exports = jQuery;

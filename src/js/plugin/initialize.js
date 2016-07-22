@@ -19,7 +19,7 @@ var util = require('../lib/util');
 var nativeScrollHandler = require('./handler/native-scroll');
 var instances = require('./instances');
 var update = require('./update');
-var $ = jQuery;
+var $ = require('../lib/dom');
 module.exports = function (element, config) {
 	config = typeof config === 'object' ? config : {};
 

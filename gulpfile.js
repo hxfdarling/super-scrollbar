@@ -15,7 +15,7 @@ var source = require('vinyl-source-stream');
 var stream = require('event-stream');
 var uglify = require('gulp-uglify');
 var zip = require('gulp-zip');
-
+var minifycss =require('gulp-minify-css');
 var packageInfo = require('./package');
 var name = packageInfo.name;
 var version = '/* ' + name + ' v' + packageInfo.version + "/\n*" + packageInfo.description + ' */\n';
@@ -120,6 +120,7 @@ gulp.task('css:min', ['clean:css:min'], function () {
 			.pipe(autoprefixer(autoPrefixerConfig))
 			.pipe(insert.prepend(version))
 			.pipe(rename(name + '.min.css'))
+			.pipe(minifycss())
 			.pipe(gulp.dest('./dist/css'))
 			.pipe(connect.reload());
 	});
@@ -130,6 +131,7 @@ gulp.task('build', ['js', 'js:min', 'css', 'css:min']);
 gulp.task('dev', ['js','css']);
 gulp.task('connect', ['dev'], function () {
 	connect.server({
+		port:80,
 		root: __dirname,
 		livereload: true
 	});

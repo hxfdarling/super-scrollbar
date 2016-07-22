@@ -8,6 +8,5 @@
 'use strict';
 
 module.exports = function (element) {
-  var instance = instances.get(element);
 
 };

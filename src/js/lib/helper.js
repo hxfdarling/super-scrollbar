@@ -7,7 +7,6 @@
  */
 'use strict';
 var dom = require('./dom');
-
 function addClass(element, className) {
 
 	if (element.classList) {
@@ -81,28 +80,6 @@ exports.isEditable = function(el) {
 		dom.matches(el, "select,[contenteditable]") ||
 		dom.matches(el, "textarea,[contenteditable]") ||
 		dom.matches(el, "button,[contenteditable]");
-};
-
-
-
-exports.startScrolling = function(element, axis) {
-	addClass(element, 'ss-in-scrolling');
-	if (typeof axis !== 'undefined') {
-		addClass(element, 'ss-' + axis);
-	} else {
-		addClass(element, 'ss-x');
-		addClass(element, 'ss-y');
-	}
-};
-
-exports.stopScrolling = function(element, axis) {
-	removeClass(element, 'ss-in-scrolling');
-	if (typeof axis !== 'undefined') {
-		removeClass(element, 'ss-' + axis);
-	} else {
-		removeClass(element, 'ss-x');
-		removeClass(element, 'ss-y');
-	}
 };
 
 exports.env = {

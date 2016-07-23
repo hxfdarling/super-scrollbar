@@ -78,38 +78,155 @@
 				return window.setTimeout(callback, delay || (1000 / 60), Date.now());
 			};
 	})();
+	var util = require('./util');
 
-	function ZAnimate($el, property, callback, duration, timing) {
-		if (!$el.length) {
-			throw 'jQuery object is undefined';
-		}
-		this.__target = $el;
-		this.init(callback, duration, timing);
-		this.run(property);
+	/**
+	 *
+	 * @param config:[property:[key,value],  duration, timing]
+	 * @constructor
+	 */
+	function ZAnimate(config) {
+		util.apply(this, config);
 	}
 
 	ZAnimate.prototype = {
-		__duration: 200,
-		__stoped: false,
-		__doing: false,
-		__target: null,
-		__frames: {},
-		__callback: null,
+		duration: 200,
 		/**
 		 * quadratic,bounce,easing,back,circular,elastic,smooth
 		 */
-		__timing: 'easing',
-		init: function (callback, duration, timing) {
-			!isNaN(parseFloat(duration)) && (this.__duration = parseFloat(duration));
-			this.__callback = callback;
-			this.__timing = timing || this.__timing;
+		timing: 'easing',
+		__stoped: false,
+		__doing: false,
+		__frames: {},
+		beforeStep: function () {
+			//检查当前动画是否能够继续执行，比如element被删除会导致执行失败，需要终止动画继续执行
+			//this.stop();
 		},
-		callback: function () {
+		stepCallback: function (key, total) {
+			this.trigger('zAnimating', key, total);
+		},
+		/**
+		 * 添加更多的动画关键帧,一个dom只需要一个animate对象，所有动画都 又这个对象处理
+		 * @param property
+		 */
+		run: function (property) {
+			if (property) {
+				this._pushFrame(property);
+				if (!this.isDoing()) {
+					this.start();
+				}
+			}
+		},
+		start: function () {
+			this.__stoped = false;
+			this.__doing = false;
+			this.trigger('zAnimateStart');
+			requestAnimationFrameHelper.call(window, bind(this._step, this));
+		},
+		isDoing: function () {
+			return this.__doing;
+		},
+		stop: function () {
+			if (this.isDoing()) {
+				this.__stoped = true;
+				this.trigger('zAnimateStop');
+				this._stepEnd();
+			}
+			return this;
+		},
+		_stepEnd: function () {
 			this.__doing = false;
 			this.__frames = {};
-			this.__callback && this.__callback();
 			this.trigger('zAnimateEnd');
 		},
+		_pushFrame: function (property) {
+			if (!property)return;
+			var now = Date.now(), value;
+			for (var key in property) {
+				if (!property.hasOwnProperty(key)) {
+					return;
+				}
+				if (!this.__frames[key]) {
+					this.__frames[key] = [];
+				}
+				value = property[key];
+				if (value.from === undefined) {
+					value.from = 0;
+				}
+				if (value.to === undefined) {
+					value.to = 0;
+				}
+				if (!value.delta) {
+					value.delta = value.to - value.from;
+				}
+				if (value.delta) {
+					value.last = (value.delta < 0) ? 0.99 : -0.99;
+					value.start = now;
+					this.__frames[key].push(value);
+				}
+			}
+		},
+		_step: function (timestamp) {
+			this.beforeStep();
+			if (this.__stoped) {
+				return
+			}
+			this.__doing = true;
+			var hasFrame = 0;
+			var now = Date.now();
+			var duration = this.duration;
+			var delta, item, finished, elapsed, position, que, total;
+			for (var key in this.__frames) {
+				if (!this.__frames.hasOwnProperty(key)) {
+					return;
+				}
+				hasFrame++;
+				que = this.__frames[key];
+				total = 0;
+				for (var i = 0; i < que.length; i++) {
+					item = que[i];
+					elapsed = now - item.start;
+					finished = (elapsed >= duration);
+
+					// scroll position: [0, 1]
+					if (typeof this.timing == 'function') {
+						position = this.timing((finished) ? 1 : elapsed / duration);
+					} else {
+						position = timing[this.timing]((finished) ? 1 : elapsed / duration);
+					}
+
+
+					// only need the difference
+					delta = (item.delta * position - item.last) >> 0;
+
+					// add this to the total
+					total += delta;
+
+					// update last values
+					item.last += delta;
+
+					// delete and step back if it's over
+					if (finished) {
+						que.splice(i, 1);
+						i--;
+					}
+				}
+
+				this.stepCallback(key, total);
+				if (!que.length) {
+					delete this.__frames[key];
+					hasFrame--;
+				}
+			}
+			if (hasFrame) {
+				requestAnimationFrameHelper.call(window, bind(this._step, this));
+			} else {
+				this._stepEnd();
+			}
+
+		}
+	};
+	util.apply(ZAnimate.prototype, {
 		__listeners: {},
 		on: function (name, fn, scope, once) {
 			var listener = this.__listeners[name] || [];
@@ -149,159 +266,8 @@
 					i--;
 				}
 			}
-		},
-		step: function (timestamp) {
-			if (!this.__target.parent().length) {//dom is destroyed
-				this.stop();
-			}
-			if (this.__stoped) {
-				return
-			}
-			this.__doing = true;
-			var hasFrame = 0;
-			var now = Date.now();
-			var duration = this.__duration;
-			var delta, item, finished, elapsed, position, que, total;
-			var current;
-			for (var key in this.__frames) {
-				if (!this.__frames.hasOwnProperty(key)) {
-					return;
-				}
-				hasFrame++;
-				que = this.__frames[key];
-				total = 0;
-				for (var i = 0; i < que.length; i++) {
-					item = que[i];
-					elapsed = now - item.start;
-					finished = (elapsed >= duration);
-
-					// scroll position: [0, 1]
-					if (typeof this.__timing == 'function') {
-						position = this.__timing((finished) ? 1 : elapsed / duration);
-					} else {
-						position = timing[this.__timing]((finished) ? 1 : elapsed / duration);
-					}
-
-
-					// only need the difference
-					delta = (item.delta * position - item.last) >> 0;
-
-					// add this to the total
-					total += delta;
-
-					// update last values
-					item.last += delta;
-
-					// delete and step back if it's over
-					if (finished) {
-						que.splice(i, 1);
-						i--;
-					}
-				}
-
-				if (window.devicePixelRatio) {
-					//scrollX /= (window.devicePixelRatio;
-					//scrollY /= window.devicePixelRatio;
-				}
-				switch (key) {
-					case  'scrollLeft':
-						this.__target[0].scrollLeft += total;
-						current = this.__target[0].scrollLeft;
-						break;
-					case 'scrollTop':
-						this.__target[0].scrollTop += total;
-						current = this.__target[0].scrollTop;
-						break;
-					default:
-						this.__target.css(key, parseInt(this.__target.css(key)) + total);
-						current = parseInt(this.__target.css('key'));
-						break;
-				}
-				if (!que.length) {
-					delete this.__frames[key];
-					hasFrame--;
-				}
-				this.trigger('zAnimating', key, current);
-			}
-			if (hasFrame) {
-				requestAnimationFrameHelper.call(window, bind(this.step, this));
-			} else {
-				this.callback();
-			}
-
-		},
-		pushFrame: function (property) {
-			if (!property)return;
-			var now = Date.now(), value;
-			for (var key in property) {
-				if (!property.hasOwnProperty(key)) {
-					return;
-				}
-				if (!this.__frames[key]) {
-					this.__frames[key] = [];
-				}
-				value = property[key];
-				if (value.from === undefined) {
-					switch (key) {
-						case 'scrollTop':
-							value.from = this.__target.scrollTop();
-							break;
-						case 'scrollLeft':
-							value.from = this.__target.scrollLeft();
-							break;
-						default :
-							value.from = parseInt(this.__target.css(key));
-							break;
-					}
-				}
-				if (value.to === 'auto') {
-					this.__target.css(key, 'auto');
-					value.to = parseInt(this.__target.css(key));
-					this.__target.css(key, value.from);
-				}
-				if (value.from !== undefined && value.to !== undefined) {
-					value.delta = value.to - value.from;
-				}
-				if (value.delta) {
-					value.last = (value.delta < 0) ? 0.99 : -0.99;
-					value.start = now;
-					this.__frames[key].push(value);
-				}
-			}
-		},
-		update: function (callback, duration, timing) {
-			this.init(callback, duration, timing);
-		},
-		/**
-		 * 添加更多的动画关键帧,一个dom只需要一个animate对象，所有动画都 又这个对象处理
-		 * @param property
-		 */
-		run: function (property) {
-			if (property) {
-				this.pushFrame(property);
-				if (!this.isDoing()) {
-					this.start();
-				}
-			}
-		},
-		start: function () {
-			this.__stoped = false;
-			this.__doing = false;
-			this.trigger('zAnimateStart');
-			requestAnimationFrameHelper.call(window, bind(this.step, this));
-		},
-		isDoing: function () {
-			return this.__doing;
-		},
-		stop: function () {
-			if (this.isDoing()) {
-				this.__stoped = true;
-				this.trigger('zAnimateStop');
-				this.callback();
-			}
-			return this;
 		}
-	};
+	});
 
 	if (typeof module != 'undefined' && module.exports) {
 		module.exports = ZAnimate;

@@ -7,17 +7,22 @@
  */
 'use strict';
 module.exports = {
-	handlers: ['click-bar', 'drag-bar', 'keyboard', 'wheel', 'touch'],
+	scrollModel: 'native',//position,transition,native
+	handlers: ['click-rail', 'drag-bar', 'keyboard', 'wheel', 'touch'],
 	/**
 	 *  scroll bar min size (height or width)
 	 */
 	barMinSize: 50,
-	scrollIncrement: 120,
+	wheelSpeed: 1,
+	keyScrollIncrement: 100,//key step
 	/*
 	 position of scroll bar relative to content
 	 values (string): "inside", "outside" (requires elements with not position:static)
 	 */
 	barPosition: "inside",
 	autoHideBar: true,
-	disableOver: ["select", "option", "keygen", "datalist", "textarea"]
+	disableOver: ["select", "option", "keygen", "datalist", "textarea"],
+	stopPropagationOnClick: true,
+	wheelPropagation: true,
+	swipePropagation:true
 };

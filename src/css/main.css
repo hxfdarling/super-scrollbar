@@ -6,13 +6,14 @@ body.scrolling {
 	cursor: pointer;
 }
 
-.ss-container {
+.super-scrollbar {
 	-ms-touch-action: none;
 	touch-action: none;
 	overflow: hidden !important;
 	-ms-overflow-style: none;
 	position: relative;
 	-webkit-tap-highlight-color: transparent;
+	outline: none;
 }
 
 .ss-content {
@@ -20,46 +21,46 @@ body.scrolling {
 }
 
 @supports (-ms-overflow-style: none) {
-	.ss-container {
+	.super-scrollbar {
 		overflow: auto !important;
 	}
 }
 
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-	.ss-container {
+	.super-scrollbar {
 		overflow: auto !important;
 	}
 }
 
-.ss-container.ss-active-x > .ss-scrollbar-x-rail,
-.ss-container.ss-active-y > .ss-scrollbar-y-rail {
+.super-scrollbar.ss-active-x > .ss-scrollbar-x-rail,
+.super-scrollbar.ss-active-y > .ss-scrollbar-y-rail {
 	display: block;
 	background-color: transparent;
 }
 
-.ss-container.ss-in-scrolling {
+.super-scrollbar.ss-in-scrolling {
 	pointer-events: none;
 }
 
-.ss-container.ss-in-scrolling.ss-x > .ss-scrollbar-x-rail {
+.super-scrollbar.ss-in-scrolling.ss-x > .ss-scrollbar-x-rail {
 	background-color: #eee;
 	opacity: 0.9;
 }
 
-.ss-container.ss-in-scrolling.ss-x > .ss-scrollbar-x-rail > .ss-scrollbar-x {
+.super-scrollbar.ss-in-scrolling.ss-x > .ss-scrollbar-x-rail > .ss-scrollbar-x {
 	background-color: #999;
 }
 
-.ss-container.ss-in-scrolling.ss-y > .ss-scrollbar-y-rail {
+.super-scrollbar.ss-in-scrolling.ss-y > .ss-scrollbar-y-rail {
 	background-color: #eee;
 	opacity: 0.9;
 }
 
-.ss-container.ss-in-scrolling.ss-y > .ss-scrollbar-y-rail > .ss-scrollbar-y {
+.super-scrollbar.ss-in-scrolling.ss-y > .ss-scrollbar-y-rail > .ss-scrollbar-y {
 	background-color: #999;
 }
 
-.ss-container > .ss-scrollbar-x-rail {
+.super-scrollbar > .ss-scrollbar-x-rail {
 	display: none;
 	position: absolute;
 	opacity: 0;
@@ -67,10 +68,10 @@ body.scrolling {
 	bottom: 0;
 	height: 15px;
 	cursor: pointer;
-	left:0;
+	left: 0;
 }
 
-.ss-container > .ss-scrollbar-x-rail > .ss-scrollbar-x {
+.super-scrollbar > .ss-scrollbar-x-rail > .ss-scrollbar-x {
 	position: absolute;
 	background-color: #aaa;
 	border-radius: 6px;
@@ -80,11 +81,13 @@ body.scrolling {
 	border: none;
 }
 
-.ss-container > .ss-scrollbar-x-rail:hover > .ss-scrollbar-x, .ss-container > .ss-scrollbar-x-rail:active > .ss-scrollbar-x {
+.super-scrollbar > .ss-scrollbar-x-rail.drag > .ss-scrollbar-x,
+.super-scrollbar > .ss-scrollbar-x-rail:hover > .ss-scrollbar-x,
+.super-scrollbar > .ss-scrollbar-x-rail:active > .ss-scrollbar-x {
 	height: 11px;
 }
 
-.ss-container > .ss-scrollbar-y-rail {
+.super-scrollbar > .ss-scrollbar-y-rail {
 	display: none;
 	position: absolute;
 	opacity: 0;
@@ -92,11 +95,11 @@ body.scrolling {
 	right: 0;
 	width: 15px;
 	cursor: pointer;
-	top:0;
+	top: 0;
 
 }
 
-.ss-container > .ss-scrollbar-y-rail > .ss-scrollbar-y {
+.super-scrollbar > .ss-scrollbar-y-rail > .ss-scrollbar-y {
 	position: absolute;
 	background-color: #aaa;
 	-webkit-border-radius: 6px;
@@ -108,51 +111,55 @@ body.scrolling {
 	border: none;
 }
 
-.ss-container > .ss-scrollbar-y-rail:hover > .ss-scrollbar-y, .ss-container > .ss-scrollbar-y-rail:active > .ss-scrollbar-y {
+.super-scrollbar > .ss-scrollbar-y-rail.drag > .ss-scrollbar-y,
+.super-scrollbar > .ss-scrollbar-y-rail:hover > .ss-scrollbar-y,
+.super-scrollbar > .ss-scrollbar-y-rail:active > .ss-scrollbar-y {
 	width: 11px;
 }
 
-.ss-container:hover.ss-in-scrolling {
+.super-scrollbar:hover.ss-in-scrolling {
 	pointer-events: none;
 }
 
-.ss-container:hover.ss-in-scrolling.ss-x > .ss-scrollbar-x-rail {
+.super-scrollbar:hover.ss-in-scrolling.ss-x > .ss-scrollbar-x-rail {
 	background-color: #eee;
 	opacity: 0.9;
 }
 
-.ss-container:hover.ss-in-scrolling.ss-x > .ss-scrollbar-x-rail > .ss-scrollbar-x {
+.super-scrollbar:hover.ss-in-scrolling.ss-x > .ss-scrollbar-x-rail > .ss-scrollbar-x {
 	background-color: #999;
 }
 
-.ss-container:hover.ss-in-scrolling.ss-y > .ss-scrollbar-y-rail {
+.super-scrollbar:hover.ss-in-scrolling.ss-y > .ss-scrollbar-y-rail {
 	background-color: #eee;
 	opacity: 0.9;
 }
 
-.ss-container:hover.ss-in-scrolling.ss-y > .ss-scrollbar-y-rail > .ss-scrollbar-y {
+.super-scrollbar:hover.ss-in-scrolling.ss-y > .ss-scrollbar-y-rail > .ss-scrollbar-y {
 	background-color: #999;
 }
 
-.ss-container:hover > .ss-scrollbar-x-rail,
-.ss-container:hover > .ss-scrollbar-y-rail {
+.super-scrollbar.touch > .ss-scrollbar-x-rail,
+.super-scrollbar.touch > .ss-scrollbar-y-rail,
+.super-scrollbar:hover > .ss-scrollbar-x-rail,
+.super-scrollbar:hover > .ss-scrollbar-y-rail {
 	opacity: 0.6;
 }
 
-.ss-container:hover > .ss-scrollbar-x-rail:hover {
+.super-scrollbar:hover > .ss-scrollbar-x-rail:hover {
 	background-color: #eee;
 	opacity: 0.9;
 }
 
-.ss-container:hover > .ss-scrollbar-x-rail:hover > .ss-scrollbar-x {
+.super-scrollbar:hover > .ss-scrollbar-x-rail:hover > .ss-scrollbar-x {
 	background-color: #999;
 }
 
-.ss-container:hover > .ss-scrollbar-y-rail:hover {
+.super-scrollbar:hover > .ss-scrollbar-y-rail:hover {
 	background-color: #eee;
 	opacity: 0.9;
 }
 
-.ss-container:hover > .ss-scrollbar-y-rail:hover > .ss-scrollbar-y {
+.super-scrollbar:hover > .ss-scrollbar-y-rail:hover > .ss-scrollbar-y {
 	background-color: #999;
 }

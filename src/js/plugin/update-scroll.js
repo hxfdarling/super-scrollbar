@@ -7,6 +7,7 @@
  */
 'use strict';
 var instances = require('./instances');
+var updateBar = require('./update-bar');
 var upEvent = document.createEvent('Event');
 var downEvent = document.createEvent('Event');
 var leftEvent = document.createEvent('Event');
@@ -35,7 +36,7 @@ xEndEvent.initEvent('ss-x-reach-end', true, true);
 yStartEvent.initEvent('ss-y-reach-start', true, true);
 yEndEvent.initEvent('ss-y-reach-end', true, true);
 
-module.exports = function (element, axis, value, animate) {
+module.exports = function (element, axis, value) {
 	if (typeof element === 'undefined') {
 		throw 'You must provide an element to the update-scroll function';
 	}
@@ -108,22 +109,13 @@ module.exports = function (element, axis, value, animate) {
 		element.dispatchEvent(rightEvent);
 	}
 	if (axis === 'top') {
-		element.scrollTop = lastTop = value;
-		instance.barY.css('top', value / instance.railYRatio);
-		instance.barYRail.css('top',value );
-
-		instance.barXRail.css('bottom',-value);
-
+		element.scrollTop = lastTop = instance.currentTop = value;
 		element.dispatchEvent(yEvent);
 	}
 
 	if (axis === 'left') {
-		element.scrollLeft = lastLeft = value;
-		instance.barX.css('left', value / instance.railXRatio);
-		instance.barXRail.css('left',value);
-
-		instance.barYRail.css('right',-value);
-
+		element.scrollLeft = lastLeft = instance.currentLeft = value;
 		element.dispatchEvent(xEvent);
 	}
+	updateBar(element);
 };

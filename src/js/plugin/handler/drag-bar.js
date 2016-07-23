@@ -11,41 +11,34 @@ var instances = require('../instances');
 var update = require('../update');
 var updateScroll = require('../update-scroll');
 var helper = require('../../lib/helper');
-var $ = require('../../lib/dom');
+var $ = require('../../lib/jquery-bridge');
 function bindMouseScrollXHandler(element, instance) {
 	var currentLeft = null;
 	var currentPageX = null;
 	var $doc = $(instance.ownerDocument);
 
 	function updateScrollLeft(deltaX) {
-		var newLeft = currentLeft + (deltaX * instance.railXRatio);
-		var maxLeft = instance.maxLeft;
-		if (newLeft < 0) {
-			instance.currentLeft = 0;
-		} else if (newLeft > maxLeft) {
-			instance.currentLeft = maxLeft;
-		} else {
-			instance.currentLeft = newLeft;
-		}
+		instance.setCurrentLeft(currentLeft + (deltaX * instance.railXRatio));
 		updateScroll(element, 'left', instance.currentLeft);
 	}
 
 	var mouseMoveHandler = function (e) {
 		updateScrollLeft(e.pageX - currentPageX);
-		update(element);
 		e.stopPropagation();
 		e.preventDefault();
 	};
 
 	var mouseUpHandler = function () {
-		helper.stopScrolling(element, 'x');
+		instance.stopScrolling('x');
+		instance.barXRail.removeClass('drag');
 		$doc.off('mousemove', mouseMoveHandler);
 	};
-	var $barX = $(instance.barX);
+	var $barX = instance.barX;
 	$barX.on('mousedown', function (e) {
 		currentPageX = e.pageX;
 		currentLeft = $barX.position().left * instance.railXRatio;
-		helper.startScrolling(element, 'x');
+		instance.startScrolling('x');
+		instance.barXRail.addClass('drag');
 		$doc.on('mousemove', mouseMoveHandler);
 		$doc.one('mouseup', mouseUpHandler);
 
@@ -61,37 +54,29 @@ function bindMouseScrollYHandler(element, instance) {
 	var $doc = $(instance.ownerDocument);
 
 	function updateScrollTop(deltaY) {
-		var newTop = currentTop + (deltaY * instance.railYRatio);
-		var maxTop = instance.maxTop;
-
-		if (newTop < 0) {
-			instance.currentTop = 0;
-		} else if (newTop > maxTop) {
-			instance.currentTop = maxTop;
-		} else {
-			instance.currentTop = newTop;
-		}
+		instance.setCurrentTop(currentTop + (deltaY * instance.railYRatio));
 		updateScroll(element, 'top', instance.currentTop);
 	}
 
 	var mouseMoveHandler = function (e) {
 		updateScrollTop(e.pageY - currentPageY);
-		update(element);
 		e.stopPropagation();
 		e.preventDefault();
 	};
 
 	var mouseUpHandler = function () {
-		helper.stopScrolling(element, 'y');
+		instance.stopScrolling('y');
+		instance.barYRail.removeClass('drag');
 		$doc.off('mousemove', mouseMoveHandler);
 	};
 
-	var $barY = $(instance.barY);
+	var $barY = instance.barY;
 
 	$barY.on('mousedown', function (e) {
 		currentPageY = e.pageY;
 		currentTop = $barY.position().top * instance.railYRatio;
-		helper.startScrolling(element, 'y');
+		instance.startScrolling('y');
+		instance.barYRail.addClass('drag');
 		$doc.on('mousemove', mouseMoveHandler);
 		$doc.one('mouseup', mouseUpHandler);
 		e.stopPropagation();

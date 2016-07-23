@@ -127,7 +127,7 @@ function bindMouseWheelHandler(element, instance) {
 	if (typeof window.onwheel !== "undefined") {
 		$(element).on('wheel', mousewheelHandler);
 	} else if (typeof window.onmousewheel !== "undefined") {
-		$(element).one('mousewheel', mousewheelHandler);
+		$(element).on('mousewheel', mousewheelHandler);
 	}
 }
 

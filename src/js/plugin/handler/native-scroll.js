@@ -18,8 +18,8 @@ function bindNativeScroll(element) {
 			return;
 		}
 		if (instance.currentLeft !== element.scrollLeft || instance.currentTop !== element.scrollTop) {
-			instance.currentLeft = element.scrollLeft;
-			instance.currentTop = element.scrollTop;
+			instance.currentLeft = instance.getTrueLeft(element.scrollLeft);
+			instance.currentTop = instance.getTrueTop(element.scrollTop);
 			updateBar(element);
 		}
 

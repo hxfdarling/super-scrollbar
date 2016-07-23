@@ -7,7 +7,6 @@
  */
 'use strict';
 module.exports = {
-	scrollModel: 'native',//position,transition,native
 	handlers: ['click-rail', 'drag-bar', 'keyboard', 'wheel', 'touch'],
 	/**
 	 *  scroll bar min size (height or width)

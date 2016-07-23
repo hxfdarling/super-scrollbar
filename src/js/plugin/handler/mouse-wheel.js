@@ -21,7 +21,7 @@ function bindMouseWheelHandler(element, instance) {
 			if (!instance.barYActive) {
 				return false;
 			}
-			if ((scrollTop === 0 && deltaY > 0) || (scrollTop >= instance.contentHeight - instance.containerHeight && deltaY < 0)) {
+			if ((scrollTop === 0 && deltaY > 0) || (scrollTop >= instance.maxTop && deltaY < 0)) {
 				return !instance.config.wheelPropagation;
 			}
 		}
@@ -31,7 +31,7 @@ function bindMouseWheelHandler(element, instance) {
 			if (!instance.barXActive) {
 				return false;
 			}
-			if ((scrollLeft === 0 && deltaX < 0) || (scrollLeft >= instance.contentWidth - instance.containerWidth && deltaX > 0)) {
+			if ((scrollLeft === 0 && deltaX < 0) || (scrollLeft >= instance.maxLeft && deltaX > 0)) {
 				return !instance.config.wheelPropagation;
 			}
 		}
@@ -41,7 +41,6 @@ function bindMouseWheelHandler(element, instance) {
 	function getDeltaFromEvent(e) {
 		var deltaX = e.deltaX;
 		var deltaY = -1 * e.deltaY;
-
 		if (typeof deltaX === "undefined" || typeof deltaY === "undefined") {
 			// OS X Safari
 			deltaX = -1 * e.wheelDeltaX / 6;
@@ -59,7 +58,10 @@ function bindMouseWheelHandler(element, instance) {
 			deltaX = 0;
 			deltaY = e.wheelDelta;
 		}
-
+		if(helper.env.isEdge){
+			deltaX*=100/130;
+			deltaY*=100/130;
+		}
 		return [-deltaX, deltaY];
 	}
 
@@ -91,42 +93,30 @@ function bindMouseWheelHandler(element, instance) {
 
 		var deltaX = delta[0];
 		var deltaY = delta[1];
-		var newTop, newLeft;
+		var newTop, newLeft,perporty={};
 		if (shouldBeConsumedByChild(deltaX, deltaY)) {
 			return;
 		}
 		shouldPrevent = false;
 		if (instance.barYActive && instance.barXActive) {
-			// deltaX will only be used for horizontal scrolling and deltaY will
-			// only be used for vertical scrolling - this is the default
-			instance.animate.run({
-				top: {delta: -(deltaY * instance.config.wheelSpeed)},
-				left: {delta: -(deltaX * instance.config.wheelSpeed)}
-			});
+			perporty.top = {delta: -(deltaY * instance.config.wheelSpeed)};
+			perporty.left = {delta: -(deltaX * instance.config.wheelSpeed)};
 		} else if (instance.barYActive && !instance.barXActive) {
-			// only vertical scrollbar is active and useBothWheelAxes option is
-			// active, so let's scroll vertical bar using both mouse wheel axes
 			if (deltaY) {
 				newTop = (deltaY * instance.config.wheelSpeed)
 			} else {
 				newTop = (deltaX * instance.config.wheelSpeed);
 			}
-			instance.animate.run({
-				top: {delta: newTop}
-			});
+			perporty.top={delta: newTop};
 		} else if (instance.barXActive && !instance.barYActive) {
-			// useBothWheelAxes and only horizontal bar is active, so use both
-			// wheel axes for horizontal bar
 			if (deltaX) {
 				newLeft = -(deltaX * instance.config.wheelSpeed);
 			} else {
 				newLeft = -(deltaY * instance.config.wheelSpeed);
 			}
-			instance.animate.run({
-				left: {delta: newLeft}
-			});
+			perporty.left={delta: newLeft};
 		}
-
+		instance.animate.run(perporty);
 
 		if (shouldPreventDefault(deltaX, deltaY)) {
 			e.stopPropagation();

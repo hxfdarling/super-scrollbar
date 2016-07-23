@@ -49,14 +49,6 @@ function Instance(element, config) {
 	instance.negativeScrollAdjustment = instance.isNegativeScroll ? element.scrollWidth - element.clientWidth : 0;
 	instance.ownerDocument = element.ownerDocument || document;
 	$element.addClass('super-scrollbar');
-	switch (config.scrollModel) {
-		case 'native':
-			break;
-		case 'position':
-		case 'transition':
-			$element.wrapInner('<div class="ss-content"></div>');
-			break;
-	}
 	/*创建横向滚动条*/
 	instance.barXRail = $('<div class="ss-scrollbar-x-rail"></div>')
 		.appendTo($element)

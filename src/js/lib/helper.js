@@ -52,7 +52,6 @@ function hasClass(element, className) {
 exports.addClass = addClass;
 exports.removeClass = removeClass;
 exports.hasClass = hasClass;
-
 var toInt = exports.toInt = function(x) {
 	return parseInt(x, 10) || 0;
 };
@@ -82,7 +81,9 @@ exports.isEditable = function(el) {
 		dom.matches(el, "button,[contenteditable]");
 };
 
+
 exports.env = {
+	isEdge:/Edge/.test(navigator.userAgent),
 	isWebKit: 'WebkitAppearance' in document.documentElement.style,
 	supportsTouch: (('ontouchstart' in window) || window.DocumentTouch && document instanceof window.DocumentTouch),
 	supportsIePointer: window.navigator.msMaxTouchPoints !== null

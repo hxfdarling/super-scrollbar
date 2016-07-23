@@ -9,7 +9,7 @@
 
 var instances = require('./instances');
 var updateScroll = require('./update-scroll');
-module.exports = function (element) {
+module.exports = function(element) {
 	var instance = instances.get(element);
 	if (!instance) {
 		return;
@@ -17,16 +17,10 @@ module.exports = function (element) {
 	var $element = $(element);
 	// Recalcuate negative scrollLeft adjustment
 	instance.negativeScrollAdjustment = instance.isNegativeScroll ? element.scrollWidth - element.clientWidth : 0;
-	if (instance.config.scrollModel !== 'native') {
-		//采用position，或者transition
-		var $content = $element.find('.ss-content');
-		instance.contentWidth = $content.width();
-		instance.contentHeight = $content.height();
-	} else {
-		//采用本地化滚动
-		instance.contentWidth = element.scrollWidth;
-		instance.contentHeight = element.scrollHeight;
-	}
+
+	//采用本地化滚动
+	instance.contentWidth = element.scrollWidth;
+	instance.contentHeight = element.scrollHeight;
 
 	instance.containerWidth = $element.width();
 	instance.containerHeight = $element.height();

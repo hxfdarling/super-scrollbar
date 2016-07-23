@@ -36,7 +36,7 @@ xEndEvent.initEvent('ss-x-reach-end', true, true);
 yStartEvent.initEvent('ss-y-reach-start', true, true);
 yEndEvent.initEvent('ss-y-reach-end', true, true);
 
-module.exports = function (element, axis, value) {
+module.exports = function(element, axis, value) {
 	if (typeof element === 'undefined') {
 		throw 'You must provide an element to the update-scroll function';
 	}
@@ -61,24 +61,26 @@ module.exports = function (element, axis, value) {
 
 	var instance = instances.get(element);
 
-	if (axis === 'top' && value >= instance.contentHeight - instance.containerHeight) {
+	if (axis === 'top' && value >= instance.maxTop) {
 		// don't allow scroll past container
-		value = instance.contentHeight - instance.containerHeight;
+		value = instance.maxTop;
 		if (value - element.scrollTop <= 1) {
 			// mitigates rounding errors on non-subpixel scroll values
-			value = element.scrollTop;
+			// fix edge buge
+			//value = element.scrollTop;
 		} else {
 			element.scrollTop = value;
 		}
 		element.dispatchEvent(yEndEvent);
 	}
 
-	if (axis === 'left' && value >= instance.contentWidth - instance.containerWidth) {
+	if (axis === 'left' && value >= instance.maxLeft) {
 		// don't allow scroll past container
-		value = instance.contentWidth - instance.containerWidth;
+		value = instance.maxLeft;
 		if (value - element.scrollLeft <= 1) {
 			// mitigates rounding errors on non-subpixel scroll values
-			value = element.scrollLeft;
+			//fix edge buge
+			//value = element.scrollLeft;
 		} else {
 			element.scrollLeft = value;
 		}

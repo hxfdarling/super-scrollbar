@@ -77,7 +77,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 	}
 
 	function touchStart(e) {
-		e = e.originalEvent;
+		e = e.originalEvent||e;
 		$element.addClass('touch');
 		if (shouldHandle(e)) {
 			inLocalTouch = true;
@@ -95,7 +95,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 	}
 
 	function touchMove(e) {
-		e = e.originalEvent;
+		e = e.originalEvent||e;
 		if (!inLocalTouch && instance.config.swipePropagation) {
 			touchStart(e);
 		}
@@ -130,14 +130,8 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 		$element.removeClass('touch');
 		if (!inGlobalTouch && inLocalTouch) {
 			inLocalTouch = false;
-			instance.animate.run({
-				top: {
-					delta: -200 * speed.y
-				},
-				left: {
-					delta: -200 * speed.x
-				}
-			})
+			
+			
 		}
 	}
 

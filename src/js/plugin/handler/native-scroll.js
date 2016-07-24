@@ -8,12 +8,9 @@
 'use strict';
 var instances = require('../instances');
 var updateBar = require('../update-bar');
-var $ = require('../../lib/jquery-bridge');
-
 function bindNativeScroll(element) {
-	var $element = $(element);
 	var instance = instances.get(element);
-	$element.on('scroll', function () {
+	instance.event.on(element,'scroll', function () {
 		if (instance.animate.isDoing()) {
 			return;
 		}

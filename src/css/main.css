@@ -26,10 +26,15 @@ body.scrolling {
 	}
 }
 
-@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+@media screen and (-ms-high-contrast: active),
+(-ms-high-contrast: none) {
 	.super-scrollbar {
 		overflow: auto !important;
 	}
+}
+
+.super-scrollbar.selection {
+	overflow: hidden !important;
 }
 
 .super-scrollbar.ss-active-x > .ss-scrollbar-x-rail,

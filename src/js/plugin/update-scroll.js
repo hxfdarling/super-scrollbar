@@ -8,35 +8,22 @@
 'use strict';
 var instances = require('./instances');
 var updateBar = require('./update-bar');
-var upEvent = document.createEvent('Event');
-var downEvent = document.createEvent('Event');
-var leftEvent = document.createEvent('Event');
-var rightEvent = document.createEvent('Event');
-var yEvent = document.createEvent('Event');
-var xEvent = document.createEvent('Event');
-var xStartEvent = document.createEvent('Event');
-var xEndEvent = document.createEvent('Event');
-var yStartEvent = document.createEvent('Event');
-var yEndEvent = document.createEvent('Event');
+var dom = require('../lib/dom');
+
+var upEvent = dom.createEvent('ss-scroll-up');
+var downEvent = dom.createEvent('ss-scroll-down');
+var leftEvent = dom.createEvent('ss-scroll-left');
+var rightEvent = dom.createEvent('ss-scroll-right');
+var yEvent = dom.createEvent('ss-scroll-y');
+var xEvent = dom.createEvent('ss-scroll-x');
+var xStartEvent = dom.createEvent('ss-x-reach-start');
+var xEndEvent = dom.createEvent('ss-x-reach-end');
+var yStartEvent = dom.createEvent('ss-y-reach-start');
+var yEndEvent = dom.createEvent('ss-y-reach-end');
+
 var lastTop;
 var lastLeft;
-
-upEvent.initEvent('ss-scroll-up', true, true);
-downEvent.initEvent('ss-scroll-down', true, true);
-
-leftEvent.initEvent('ss-scroll-left', true, true);
-rightEvent.initEvent('ss-scroll-right', true, true);
-
-yEvent.initEvent('ss-scroll-y', true, true);
-xEvent.initEvent('ss-scroll-x', true, true);
-
-xStartEvent.initEvent('ss-x-reach-start', true, true);
-xEndEvent.initEvent('ss-x-reach-end', true, true);
-
-yStartEvent.initEvent('ss-y-reach-start', true, true);
-yEndEvent.initEvent('ss-y-reach-end', true, true);
-
-module.exports = function(element, axis, value) {
+module.exports = function (element, axis, value) {
 	if (typeof element === 'undefined') {
 		throw 'You must provide an element to the update-scroll function';
 	}
@@ -51,12 +38,12 @@ module.exports = function(element, axis, value) {
 
 	if (axis === 'top' && value <= 0) {
 		element.scrollTop = value = 0; // don't allow negative scroll
-		element.dispatchEvent(yStartEvent);
+		dom.dispatchEvent(element, yStartEvent);
 	}
 
 	if (axis === 'left' && value <= 0) {
 		element.scrollLeft = value = 0; // don't allow negative scroll
-		element.dispatchEvent(xStartEvent);
+		dom.dispatchEvent(element, xStartEvent);
 	}
 
 	var instance = instances.get(element);
@@ -71,7 +58,7 @@ module.exports = function(element, axis, value) {
 		} else {
 			element.scrollTop = value;
 		}
-		element.dispatchEvent(yEndEvent);
+		dom.dispatchEvent(element, yEndEvent);
 	}
 
 	if (axis === 'left' && value >= instance.maxLeft) {
@@ -82,9 +69,9 @@ module.exports = function(element, axis, value) {
 			//fix edge buge
 			//value = element.scrollLeft;
 		} else {
-			element.scrollLeft = value;
+			dom.scrollLeft = value;
 		}
-		element.dispatchEvent(xEndEvent);
+		dom.dispatchEvent(element, xEndEvent);
 	}
 
 	if (!lastTop) {
@@ -96,28 +83,28 @@ module.exports = function(element, axis, value) {
 	}
 
 	if (axis === 'top' && value < lastTop) {
-		element.dispatchEvent(upEvent);
+		dom.dispatchEvent(element, upEvent);
 	}
 
 	if (axis === 'top' && value > lastTop) {
-		element.dispatchEvent(downEvent);
+		dom.dispatchEvent(element, downEvent);
 	}
 
 	if (axis === 'left' && value < lastLeft) {
-		element.dispatchEvent(leftEvent);
+		dom.dispatchEvent(element, leftEvent);
 	}
 
 	if (axis === 'left' && value > lastLeft) {
-		element.dispatchEvent(rightEvent);
+		dom.dispatchEvent(element, rightEvent);
 	}
 	if (axis === 'top') {
 		element.scrollTop = lastTop = instance.currentTop = value;
-		element.dispatchEvent(yEvent);
+		dom.dispatchEvent(element, yEvent);
 	}
 
 	if (axis === 'left') {
 		element.scrollLeft = lastLeft = instance.currentLeft = value;
-		element.dispatchEvent(xEvent);
+		dom.dispatchEvent(element, xEvent);
 	}
 	updateBar(element);
 };

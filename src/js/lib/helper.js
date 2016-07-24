@@ -7,56 +7,11 @@
  */
 'use strict';
 var dom = require('./dom');
-function addClass(element, className) {
-
-	if (element.classList) {
-		element.classList.add(className);
-	} else {
-		var classes = element.className.split(' ');
-		if (classes.indexOf(className) < 0) {
-			classes.push(className);
-		}
-		element.className = classes.join(' ');
-	}
-
-}
-
-function removeClass(element, className) {
-
-	if (element.classList) {
-		element.classList.remove(className);
-	} else {
-		var classes = element.className.split(' ');
-		var idx = classes.indexOf(className);
-		if (idx >= 0) {
-			classes.splice(idx, 1);
-		}
-		element.className = classes.join(' ');
-	}
-
-}
-
-function listClass(element) {
-	if (element.classList) {
-		return Array.prototype.slice.apply(element.classList);
-	} else {
-		return element.className.split(' ');
-	}
-}
-
-function hasClass(element, className) {
-	var cls = listClass(element);
-	return (cls.indexOf(className));
-}
-
-exports.addClass = addClass;
-exports.removeClass = removeClass;
-exports.hasClass = hasClass;
-var toInt = exports.toInt = function(x) {
+var toInt = exports.toInt = function (x) {
 	return parseInt(x, 10) || 0;
 };
 
-var clone = exports.clone = function(obj) {
+var clone = exports.clone = function (obj) {
 	if (obj === null) {
 		return null;
 	} else if (obj.constructor === Array) {
@@ -72,18 +27,28 @@ var clone = exports.clone = function(obj) {
 	}
 };
 
+var apply = function (dest, src, defaults) {
+	if (defaults) {
+		apply(dest, defaults);
+	}
 
-
-exports.isEditable = function(el) {
+	if (dest && src && typeof src == 'object') {
+		for (var key in src) {
+			dest[key] = src[key];
+		}
+	}
+	return dest;
+};
+exports.apply = apply;
+exports.isEditable = function (el) {
 	return dom.matches(el, "input,[contenteditable]") ||
 		dom.matches(el, "select,[contenteditable]") ||
 		dom.matches(el, "textarea,[contenteditable]") ||
 		dom.matches(el, "button,[contenteditable]");
 };
 
-
 exports.env = {
-	isEdge:/Edge/.test(navigator.userAgent),
+	isEdge: /Edge/.test(navigator.userAgent),
 	isWebKit: 'WebkitAppearance' in document.documentElement.style,
 	supportsTouch: (('ontouchstart' in window) || window.DocumentTouch && document instanceof window.DocumentTouch),
 	supportsIePointer: window.navigator.msMaxTouchPoints !== null

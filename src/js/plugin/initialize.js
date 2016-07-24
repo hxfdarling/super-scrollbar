@@ -16,23 +16,23 @@ var handlers = {
 	'touch': require('./handler/touch'),
 	'selection': require('./handler/selection')
 };
-var util = require('../lib/util');
 var nativeScrollHandler = require('./handler/native-scroll');
 var instances = require('./instances');
 var update = require('./update');
 var updateScroll = require('./update-scroll');
 var config = require('./config');
-var $ = require('../lib/jquery-bridge');
-module.exports = function(element, cfg) {
+var dom = require('../lib/dom');
+var helper = require('../lib/helper');
+module.exports = function (element, cfg) {
 	cfg = typeof cfg === 'object' ? cfg : {};
-	var instance = instances.add(element, util.apply(config, cfg));
-	instance.config.handlers.forEach(function(handlerName) {
+	var instance = instances.add(element, helper.apply(config, cfg));
+	instance.config.handlers.forEach(function (handlerName) {
 		handlers[handlerName](element);
 	});
 
 	nativeScrollHandler(element);
 
-	instance.animate.stepCallback = function(key, value) {
+	instance.animate.stepCallback = function (key, value) {
 		switch (key) {
 			case 'top':
 				updateScroll(element, key, instance.currentTop + value);
@@ -43,7 +43,7 @@ module.exports = function(element, cfg) {
 		}
 	};
 	if (instance.config.autoHideBar) {
-		$(element).addClass('ss-auto-hide');
+		dom.addClass(element, 'ss-auto-hide');
 	}
 	update(element);
 };

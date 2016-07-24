@@ -1,8 +1,8 @@
 'use strict';
-
+var helper = require('./helper');
 var DOM = {};
 
-DOM.e = function (tagName, className) {
+DOM.element = function (tagName, className) {
 	var element = document.createElement(tagName);
 	element.className = className;
 	return element;
@@ -14,7 +14,13 @@ DOM.appendTo = function (child, parent) {
 };
 
 function cssGet(element, styleName) {
-	return window.getComputedStyle(element)[styleName];
+	if (window.getComputedStyle) {
+		return window.getComputedStyle(element)[styleName];
+	}
+	if (element.currentStyle) {
+		return element.currentStyle[styleName]
+	}
+
 }
 
 function cssSet(element, styleName, styleValue) {
@@ -40,11 +46,16 @@ DOM.css = function (element, styleNameOrObject, styleValue) {
 		if (typeof styleValue === 'undefined') {
 			return cssGet(element, styleNameOrObject);
 		} else {
-			return cssSet(element, styleNameOrObject, styleValue);
+			return cssSet(element, styleNameOrObject, isNaN(styleValue) ? 0 : styleValue);
 		}
 	}
 };
-
+DOM.width = function (element, value) {
+	return helper.toInt(DOM.css(element, 'width', value));
+};
+DOM.height = function (element, value) {
+	return helper.toInt(DOM.css(element, 'height', value));
+};
 DOM.matches = function (element, query) {
 	if (typeof element.matches !== 'undefined') {
 		return element.matches(query);
@@ -76,5 +87,71 @@ DOM.queryChildren = function (element, selector) {
 		return DOM.matches(child, selector);
 	});
 };
+DOM.createEvent = function (name) {
+	var event;
+	if (document.createEvent) {
+		event = document.createEvent('Event');
+		event.initEvent(name, true, true);
+	}
+	if (document.createEventObject) {
+		event = document.createEventObject(name);
+		event.type = name;
+	}
+	return event;
+};
+DOM.dispatchEvent = function (element, event) {
+	if (document.createEventObject) {
+		//element.fireEvent('on' + event.type);
+	} else if (element.dispatchEvent) {
+		element.dispatchEvent(event);
+	}
+};
 
+function addClass(element, className) {
+
+	if (element.classList) {
+		element.classList.add(className);
+	} else {
+		var classes = element.className.split(' ');
+		if (classes.indexOf(className) < 0) {
+			classes.push(className);
+		}
+		element.className = classes.join(' ');
+	}
+
+}
+
+function removeClass(element, className) {
+
+	if (element.classList) {
+		element.classList.remove(className);
+	} else {
+		var classes = element.className.split(' ');
+		var idx = classes.indexOf(className);
+		if (idx >= 0) {
+			classes.splice(idx, 1);
+		}
+		element.className = classes.join(' ');
+	}
+
+}
+
+function listClass(element) {
+	if (element.classList) {
+		return Array.prototype.slice.apply(element.classList);
+	} else {
+		return element.className.split(' ');
+	}
+}
+
+function hasClass(element, className) {
+	var cls = listClass(element);
+	return (cls.indexOf(className));
+}
+
+DOM.addClass = addClass;
+DOM.removeClass = removeClass;
+DOM.hasClass = hasClass;
+
+window.dom = DOM;
 module.exports = DOM;

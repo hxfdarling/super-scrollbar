@@ -26,3 +26,31 @@ if (!String.prototype.trim) {
 		return this.replace(/(^\s*)|(\s*$)/g, "");
 	};
 }
+if (!Array.prototype.indexOf) {
+	Array.prototype.indexOf = function (value) {
+		for (var i = 0; i < this.length; i++) {
+			if (this[i] === value) {
+				return i;
+			}
+		}
+		return -1;
+	}
+}
+if (!Array.prototype.filter) {
+	Array.prototype.filter = function (fn) {
+		var result = [];
+		for (var i = 0; i < this.length; i++) {
+			if (fn(this[i])) {
+				result.push(this[i]);
+			}
+		}
+		return result;
+	}
+}
+if (!Array.prototype.forEach) {
+	Array.prototype.forEach = function (fn) {
+		for (var i = 0; i < this.length; i++) {
+			fn(this[i]);
+		}
+	}
+}

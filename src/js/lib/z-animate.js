@@ -59,7 +59,6 @@
 			fn.apply(scope, arguments);
 		}
 	};
-	var $ = window.jQuery;
 	/*
 	 * Wraps window properties to allow server side rendering
 	 */
@@ -78,7 +77,7 @@
 				return window.setTimeout(callback, delay || (1000 / 60), Date.now());
 			};
 	})();
-	var util = require('./util');
+	var helper = require('./helper');
 
 	/**
 	 *
@@ -86,7 +85,7 @@
 	 * @constructor
 	 */
 	function ZAnimate(config) {
-		util.apply(this, config);
+		helper.apply(this, config);
 	}
 
 	ZAnimate.prototype = {
@@ -97,43 +96,9 @@
 		timing: 'easing',
 		__stoped: false,
 		__doing: false,
-		__frames: {},
-		beforeStep: function () {
-			//检查当前动画是否能够继续执行，比如element被删除会导致执行失败，需要终止动画继续执行
-			//this.stop();
-		},
-		stepCallback: function (key, total) {
-			this.trigger('zAnimating', key, total);
-		},
-		/**
-		 * 添加更多的动画关键帧,一个dom只需要一个animate对象，所有动画都 又这个对象处理
-		 * @param property
-		 */
-		run: function (property) {
-			if (property) {
-				this._pushFrame(property);
-				if (!this.isDoing()) {
-					this.start();
-				}
-			}
-		},
-		start: function () {
-			this.__stoped = false;
-			this.__doing = false;
-			this.trigger('zAnimateStart');
-			requestAnimationFrameHelper.call(window, bind(this._step, this));
-		},
-		isDoing: function () {
-			return this.__doing;
-		},
-		stop: function () {
-			if (this.isDoing()) {
-				this.__stoped = true;
-				this.trigger('zAnimateStop');
-				this._stepEnd();
-			}
-			return this;
-		},
+		__frames: {}
+	};
+	helper.apply(ZAnimate.prototype, {
 		_stepEnd: function () {
 			this.__doing = false;
 			this.__frames = {};
@@ -225,8 +190,46 @@
 			}
 
 		}
-	};
-	util.apply(ZAnimate.prototype, {
+	});
+	helper.apply(ZAnimate.prototype, {
+		beforeStep: function () {
+			//检查当前动画是否能够继续执行，比如element被删除会导致执行失败，需要终止动画继续执行
+			//this.stop();
+		},
+		stepCallback: function (key, total) {
+			this.trigger('zAnimating', key, total);
+		},
+		/**
+		 * 添加更多的动画关键帧,一个dom只需要一个animate对象，所有动画都 又这个对象处理
+		 * @param property
+		 */
+		run: function (property) {
+			if (property) {
+				this._pushFrame(property);
+				if (!this.isDoing()) {
+					this.start();
+				}
+			}
+		},
+		start: function () {
+			this.__stoped = false;
+			this.__doing = false;
+			this.trigger('zAnimateStart');
+			requestAnimationFrameHelper.call(window, bind(this._step, this));
+		},
+		isDoing: function () {
+			return this.__doing;
+		},
+		stop: function () {
+			if (this.isDoing()) {
+				this.__stoped = true;
+				this.trigger('zAnimateStop');
+				this._stepEnd();
+			}
+			return this;
+		}
+	});
+	helper.apply(ZAnimate.prototype, {
 		__listeners: {},
 		on: function (name, fn, scope, once) {
 			var listener = this.__listeners[name] || [];

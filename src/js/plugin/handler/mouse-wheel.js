@@ -9,8 +9,6 @@
 var instances = require('../instances');
 var update = require('../update');
 var helper = require('../../lib/helper');
-var $ = require('../../lib/jquery-bridge');
-
 
 function bindMouseWheelHandler(element, instance) {
 	var shouldPrevent = false;
@@ -49,8 +47,8 @@ function bindMouseWheelHandler(element, instance) {
 
 		if (e.deltaMode && e.deltaMode === 1) {
 			// Firefox in deltaMode 1 means 3 Line scrolling
-			deltaX *= 100/3;
-			deltaY *= 100/3;
+			deltaX *= 100 / 3;
+			deltaY *= 100 / 3;
 		}
 
 		if (deltaX !== deltaX && deltaY !== deltaY/* NaN checks */) {
@@ -58,9 +56,9 @@ function bindMouseWheelHandler(element, instance) {
 			deltaX = 0;
 			deltaY = e.wheelDelta;
 		}
-		if(helper.env.isEdge){
-			deltaX*=100/130;
-			deltaY*=100/130;
+		if (helper.env.isEdge) {
+			deltaX *= 100 / 130;
+			deltaY *= 100 / 130;
 		}
 		return [-deltaX, deltaY];
 	}
@@ -93,7 +91,7 @@ function bindMouseWheelHandler(element, instance) {
 
 		var deltaX = delta[0];
 		var deltaY = delta[1];
-		var newTop, newLeft,perporty={};
+		var newTop, newLeft, perporty = {};
 		if (shouldBeConsumedByChild(deltaX, deltaY)) {
 			return;
 		}
@@ -107,14 +105,14 @@ function bindMouseWheelHandler(element, instance) {
 			} else {
 				newTop = (deltaX * instance.config.wheelSpeed);
 			}
-			perporty.top={delta: newTop};
+			perporty.top = {delta: newTop};
 		} else if (instance.barXActive && !instance.barYActive) {
 			if (deltaX) {
 				newLeft = -(deltaX * instance.config.wheelSpeed);
 			} else {
 				newLeft = -(deltaY * instance.config.wheelSpeed);
 			}
-			perporty.left={delta: newLeft};
+			perporty.left = {delta: newLeft};
 		}
 		instance.animate.run(perporty);
 
@@ -125,9 +123,9 @@ function bindMouseWheelHandler(element, instance) {
 	}
 
 	if (typeof window.onwheel !== "undefined") {
-		$(element).on('wheel', mousewheelHandler);
+		instance.event.on(element, 'wheel', mousewheelHandler);
 	} else if (typeof window.onmousewheel !== "undefined") {
-		$(element).on('mousewheel', mousewheelHandler);
+		instance.event.on(element, 'mousewheel', mousewheelHandler);
 	}
 }
 

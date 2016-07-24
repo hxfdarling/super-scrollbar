@@ -7,17 +7,17 @@
  */
 'use strict';
 
-var util = require('../lib/util');
 var guid = require('../lib/guid');
 var helper = require('../lib/helper');
 var instances = {};
 var zAnimate = require('../lib/z-animate');
-var $ = require('../lib/jquery-bridge');
+var EventManager = require('../lib/event-manager');
+var dom = require('../lib/dom');
 function Instance(element, config) {
 	var instance = this;
-	var $element = $(element);
 	instance.element = element;
 	instance.config = config;
+	instance.event = new EventManager();
 	instance.animate = new zAnimate({
 		status: null,
 		beforeStep: function () {
@@ -26,7 +26,7 @@ function Instance(element, config) {
 			}
 		}
 	});
-	util.apply(this, {
+	helper.apply(this, {
 		containerWidth: null,
 		containerHeight: null,
 		contentWidth: null,
@@ -38,45 +38,34 @@ function Instance(element, config) {
 		currentLeft: 0,
 		currentTop: 0
 	});
-	instance.isNegativeScroll = (function () {
-		var originalScrollLeft = element.scrollLeft;
-		var result;
-		element.scrollLeft = -1;
-		result = element.scrollLeft < 0;
-		element.scrollLeft = originalScrollLeft;
-		return result;
-	})();
-	instance.negativeScrollAdjustment = instance.isNegativeScroll ? element.scrollWidth - element.clientWidth : 0;
 	instance.ownerDocument = element.ownerDocument || document;
-	$element.addClass('super-scrollbar');
+	dom.addClass(element, 'super-scrollbar');
 	/*创建横向滚动条*/
-	instance.barXRail = $('<div class="ss-scrollbar-x-rail"></div>')
-		.appendTo($element)
-		.on({
-			focus: function () {
-				$(this).addClass('ss-focus');
-			},
-			blur: function () {
-				$(this).removeClass('ss-focus');
-			}
-		});
-	instance.barX = $('<div class="ss-scrollbar-x"></div>').appendTo(instance.barXRail);
+	instance.barXRail = dom.element('div', 'ss-scrollbar-x-rail');
+	dom.appendTo(instance.barXRail, element);
+	instance.event.on(instance.barXRail, 'focus', function () {
+		dom.addClass(instance.barXRail, 'ss-focus');
+	});
+	instance.event.on(instance.barXRail, 'blur', function () {
+		dom.removeClass(instance.barXRail, 'ss-focus');
+	});
+	instance.barX = dom.element('div', 'ss-scrollbar-x');
+	dom.appendTo(instance.barX, instance.barXRail);
 	instance.railXWidth = null;
 	instance.railXRatio = null;
 	instance.barXActive = false;
 	instance.barXWidth = null;
 	/*创建垂直滚动条*/
-	instance.barYRail = $('<div class="ss-scrollbar-y-rail" ></div>')
-		.appendTo($element)
-		.on({
-			focus: function () {
-				$(this).addClass('ss-focus');
-			},
-			blur: function () {
-				$(this).removeClass('ss-focus');
-			}
-		});
-	instance.barY = $('<div class="ss-scrollbar-y"></div>').appendTo(instance.barYRail);
+	instance.barYRail = dom.element('div', 'ss-scrollbar-y-rail');
+	dom.appendTo(instance.barYRail, element);
+	instance.event.on(instance.barYRail, 'focus', function () {
+		dom.addClass(instance.barYRail, 'ss-focus');
+	});
+	instance.event.on(instance.barYRail, 'blur', function () {
+		dom.removeClass(instance.barYRail, 'ss-focus');
+	});
+	instance.barY = dom.element('div', 'ss-scrollbar-y');
+	dom.appendTo(instance.barY, instance.barYRail);
 	instance.railYHeight = null;
 	instance.railYRatio = null;
 	instance.barYActive = false;
@@ -110,22 +99,22 @@ Instance.prototype = {
 		this.currentLeft = this.getTrueLeft(newLeft);
 	},
 	startScrolling: function (axis) {
-		helper.addClass(this.element, 'ss-in-scrolling');
+		dom.addClass(this.element, 'ss-in-scrolling');
 		if (typeof axis !== 'undefined') {
-			helper.addClass(this.element, 'ss-' + axis);
+			dom.addClass(this.element, 'ss-' + axis);
 		} else {
-			helper.addClass(this.element, 'ss-x');
-			helper.addClass(this.element, 'ss-y');
+			dom.addClass(this.element, 'ss-x');
+			dom.addClass(this.element, 'ss-y');
 		}
 	},
 
 	stopScrolling: function (axis) {
-		helper.removeClass(this.element, 'ss-in-scrolling');
+		dom.removeClass(this.element, 'ss-in-scrolling');
 		if (typeof axis !== 'undefined') {
-			helper.removeClass(this.element, 'ss-' + axis);
+			dom.removeClass(this.element, 'ss-' + axis);
 		} else {
-			helper.removeClass(this.element, 'ss-x');
-			helper.removeClass(this.element, 'ss-y');
+			dom.removeClass(this.element, 'ss-x');
+			dom.removeClass(this.element, 'ss-y');
 		}
 	}
 
@@ -151,14 +140,12 @@ exports.add = function (element, config) {
 
 exports.remove = function (element) {
 	var instance = instances[getId(element)];
-	if (instance.config.scrollModel !== 'native') {
-		$(element).find('.ss-content').first().unwrap(); //移除插入的content包裹元素
-	}
-	$(element).unwrap(); //移除ss-box
 	instance.barX.remove();
 	instance.barY.remove();
 	instance.barXRail.remove();
 	instance.barYRail.remove();
+	instance.event.offAll();
+
 	delete instances[getId(element)];
 	removeId(element);
 };

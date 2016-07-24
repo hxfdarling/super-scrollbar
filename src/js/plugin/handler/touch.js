@@ -11,7 +11,7 @@
 var helper = require('../../lib/helper');
 var instances = require('../instances');
 var updateScroll = require('../update-scroll');
-
+var dom = require('../../lib/dom');
 function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 	function shouldPreventDefault(deltaX, deltaY) {
 		var currentTop = instance.currentTop;
@@ -77,8 +77,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 	}
 
 	function touchStart(e) {
-		e = e.originalEvent||e;
-		$element.addClass('touch');
+		dom.addClass(element, 'touch');
 		if (shouldHandle(e)) {
 			inLocalTouch = true;
 
@@ -95,7 +94,6 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 	}
 
 	function touchMove(e) {
-		e = e.originalEvent||e;
 		if (!inLocalTouch && instance.config.swipePropagation) {
 			touchStart(e);
 		}
@@ -127,40 +125,38 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 	}
 
 	function touchEnd() {
-		$element.removeClass('touch');
+		dom.removeClass(element, 'touch');
 		if (!inGlobalTouch && inLocalTouch) {
 			inLocalTouch = false;
-			
-			
+
+
 		}
 	}
 
-	var $window = $(window);
-	var $element = $(element);
 	if (supportsTouch) {
-		$window.on('touchstart', globalTouchStart);
-		$window.on('touchend', globalTouchEnd);
+		instance.event.on(window, 'touchstart', globalTouchStart);
+		instance.event.on(window, 'touchend', globalTouchEnd);
 
-		$element.on('touchstart', touchStart);
-		$element.on('touchmove', touchMove);
-		$element.on('touchend', touchEnd);
+		instance.event.on(element, 'touchstart', touchStart);
+		instance.event.on(element, 'touchmove', touchMove);
+		instance.event.on(element, 'touchend', touchEnd);
 	}
 
 	if (supportsIePointer) {
 		if (window.PointerEvent) {
-			$window.on('touchstart', 'pointerdown', globalTouchStart);
-			$window.on('touchstart', 'pointerup', globalTouchEnd);
+			instance.event.on(window, 'touchstart', 'pointerdown', globalTouchStart);
+			instance.event.on(window, 'touchstart', 'pointerup', globalTouchEnd);
 
-			$element.on('pointerdown', touchStart);
-			$element.on('pointermove', touchMove);
-			$element.on('pointerup', touchEnd);
+			instance.event.on(element, 'pointerdown', touchStart);
+			instance.event.on(element, 'pointermove', touchMove);
+			instance.event.on(element, 'pointerup', touchEnd);
 		} else if (window.MSPointerEvent) {
-			$window.on('touchstart', 'MSPointerDown', globalTouchStart);
-			$window.on('touchstart', 'MSPointerUp', globalTouchEnd);
+			instance.event.on(window, 'touchstart', 'MSPointerDown', globalTouchStart);
+			instance.event.on(window, 'touchstart', 'MSPointerUp', globalTouchEnd);
 
-			$element.on('MSPointerDown', touchStart);
-			$element.on('MSPointerMove', touchMove);
-			$element.on('MSPointerUp', touchEnd);
+			instance.event.on(element, 'MSPointerDown', touchStart);
+			instance.event.on(element, 'MSPointerMove', touchMove);
+			instance.event.on(element, 'MSPointerUp', touchEnd);
 		}
 	}
 }

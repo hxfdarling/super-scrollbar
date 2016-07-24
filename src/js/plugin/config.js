@@ -7,7 +7,7 @@
  */
 'use strict';
 module.exports = {
-	handlers: ['click-rail', 'drag-bar', 'keyboard', 'wheel', 'touch'],
+	handlers: ['click-rail', 'drag-bar', 'keyboard', 'wheel', 'touch','selection'],
 	/**
 	 *  scroll bar min size (height or width)
 	 */
@@ -20,7 +20,6 @@ module.exports = {
 	 */
 	barPosition: "inside",
 	autoHideBar: true,
-	disableOver: ["select", "option", "keygen", "datalist", "textarea"],
 	stopPropagationOnClick: true,
 	wheelPropagation: true,
 	swipePropagation:true

@@ -11,7 +11,7 @@ var instances = require('./instances');
 var updateScroll = require('./update-scroll');
 var helper = require('../lib/helper');
 var dom = require('../lib/dom');
-module.exports = function (element) {
+module.exports = function(element) {
 	var instance = instances.get(element);
 	if (!instance) {
 		return;
@@ -22,6 +22,7 @@ module.exports = function (element) {
 
 	instance.containerWidth = dom.width(element);
 	instance.containerHeight = dom.height(element);
+	console.log(instance.containerHeight);
 	instance.maxLeft = Math.max(0, instance.contentWidth - instance.containerWidth);
 	instance.maxTop = Math.max(0, instance.contentHeight - instance.containerHeight);
 	instance.barYActive = instance.contentHeight > instance.containerHeight;

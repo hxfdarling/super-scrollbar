@@ -7,11 +7,11 @@
  */
 'use strict';
 var dom = require('./dom');
-var toInt = exports.toInt = function (x) {
+var toInt = exports.toInt = function(x) {
 	return parseInt(x, 10) || 0;
 };
 
-var clone = exports.clone = function (obj) {
+var clone = exports.clone = function(obj) {
 	if (obj === null) {
 		return null;
 	} else if (obj.constructor === Array) {
@@ -27,7 +27,7 @@ var clone = exports.clone = function (obj) {
 	}
 };
 
-var apply = function (dest, src, defaults) {
+var apply = function(dest, src, defaults) {
 	if (defaults) {
 		apply(dest, defaults);
 	}
@@ -40,7 +40,27 @@ var apply = function (dest, src, defaults) {
 	return dest;
 };
 exports.apply = apply;
-exports.isEditable = function (el) {
+
+/*
+ * Wraps window properties to allow server side rendering
+ */
+var currentWindowProperties = function() {
+	if (typeof window !== 'undefined') {
+		return window.requestAnimationFrame || window.webkitRequestAnimationFrame;
+	}
+};
+
+/*
+ * Helper function to never extend 60fps on the webpage.
+ */
+exports.requestAnimationFrameHelper = (function() {
+	return currentWindowProperties() ||
+		function(callback, element, delay) {
+			return window.setTimeout(callback, delay || (1000 / 60), Date.now());
+		};
+})();
+
+exports.isEditable = function(el) {
 	return dom.matches(el, "input,[contenteditable]") ||
 		dom.matches(el, "select,[contenteditable]") ||
 		dom.matches(el, "textarea,[contenteditable]") ||

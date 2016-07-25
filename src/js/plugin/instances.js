@@ -140,12 +140,13 @@ exports.add = function (element, config) {
 
 exports.remove = function (element) {
 	var instance = instances[getId(element)];
-	instance.barX.remove();
-	instance.barY.remove();
-	instance.barXRail.remove();
-	instance.barYRail.remove();
+	instance.barXRail.removeChild(instance.barX);
+	instance.barYRail.removeChild(instance.barY);
+	element.removeChild(instance.barXRail);
+	element.removeChild(instance.barYRail);
 	instance.event.offAll();
-
+	element.removeAttribute('tabIndex');
+	dom.removeClass(element, 'super-scrollbar ss-auto-hide ss-active-x ss-active-y touch selection');
 	delete instances[getId(element)];
 	removeId(element);
 };

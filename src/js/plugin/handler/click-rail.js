@@ -13,7 +13,7 @@ function pageOffset(el) {
 	return el.getBoundingClientRect();
 }
 function stopPropagation(e) {
-	e.stopPropagation();
+	helper.stopPropagation(e);
 }
 function bindClickRailXHandler(element, instance) {
 	if (instance.config.stopPropagationOnClick) {
@@ -21,7 +21,15 @@ function bindClickRailXHandler(element, instance) {
 	}
 	instance.event.on(instance.barXRail, 'click', function (e) {
 		var halfOfbarSize = helper.toInt(instance.barXWidth / 2);
-		var positionLeft = instance.railXRatio * (e.pageX - window.pageXOffset - pageOffset(instance.barXRail).left - halfOfbarSize);
+		var offset = 0;
+		if (typeof window.pageXOffset !== 'undefined') {
+			offset = window.pageXOffset;
+		}
+		var pageX = e.pageX;
+		if (typeof  e.pageX === 'undefined') {
+			pageX = e.clientX;
+		}
+		var positionLeft = instance.railXRatio * (pageX - offset - pageOffset(instance.barXRail).left - halfOfbarSize);
 		var maxPositionLeft = instance.railXRatio * (instance.railXWidth - instance.barXWidth);
 		var positionRatio = positionLeft / maxPositionLeft;
 
@@ -30,11 +38,11 @@ function bindClickRailXHandler(element, instance) {
 		} else if (positionRatio > 1) {
 			positionRatio = 1;
 		}
-		var left = ((instance.contentWidth - instance.containerWidth) * positionRatio) - instance.negativeScrollAdjustment;
+		var left = ((instance.contentWidth - instance.containerWidth) * positionRatio);
 		instance.animate.run({
 			left: {delta: left - instance.currentLeft}
 		});
-		e.stopPropagation();
+		helper.stopPropagation(e);
 	});
 }
 function bindClickRailYHandler(element, instance) {
@@ -43,7 +51,15 @@ function bindClickRailYHandler(element, instance) {
 	}
 	instance.event.on(instance.barYRail, 'click', function (e) {
 		var halfOfScrollbarLength = helper.toInt(instance.barYHeight / 2);
-		var positionTop = instance.railYRatio * (e.pageY - window.pageYOffset - pageOffset(instance.barYRail).top - halfOfScrollbarLength);
+		var offset = 0;
+		if (typeof window.window.pageYOffset !== 'undefined') {
+			offset = window.window.pageYOffset;
+		}
+		var pageY = e.pageY;
+		if (typeof  e.pageY === 'undefined') {
+			pageY = e.clientY;
+		}
+		var positionTop = instance.railYRatio * (pageY - offset - pageOffset(instance.barYRail).top - halfOfScrollbarLength);
 		var maxPositionTop = instance.railYRatio * (instance.railYHeight - instance.barYHeight);
 		var positionRatio = positionTop / maxPositionTop;
 		if (positionRatio < 0) {
@@ -55,8 +71,7 @@ function bindClickRailYHandler(element, instance) {
 		instance.animate.run({
 			top: {delta: top - instance.currentTop}
 		});
-
-		e.stopPropagation();
+		helper.stopPropagation(e);
 	});
 }
 module.exports = function (element) {

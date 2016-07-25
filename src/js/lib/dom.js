@@ -2,13 +2,13 @@
 var helper = require('./helper');
 var DOM = {};
 
-DOM.element = function(tagName, className) {
+DOM.element = function (tagName, className) {
 	var element = document.createElement(tagName);
 	element.className = className;
 	return element;
 };
 
-DOM.appendTo = function(child, parent) {
+DOM.appendTo = function (child, parent) {
 	parent.appendChild(child);
 	return child;
 };
@@ -38,7 +38,7 @@ function cssMultiSet(element, obj) {
 	return element;
 }
 
-DOM.css = function(element, styleNameOrObject, styleValue) {
+DOM.css = function (element, styleNameOrObject, styleValue) {
 	if (typeof styleNameOrObject === 'object') {
 		// multiple set with object
 		return cssMultiSet(element, styleNameOrObject);
@@ -50,13 +50,41 @@ DOM.css = function(element, styleNameOrObject, styleValue) {
 		}
 	}
 };
-DOM.width = function(element, value) {
-	return helper.toInt(DOM.css(element, 'width', value));
+DOM.width = function (element, value) {
+	if (typeof getComputedStyle !== 'undefined') {
+		return helper.toInt(DOM.css(element, 'width', value));
+	} else {
+		if (value !== undefined) {
+			helper.toInt(DOM.css(element, 'width', value));
+		}
+		if ('content-box' === DOM.css(element, 'boxSizing')) {
+			return element.offsetWidth
+				- (helper.toInt(DOM.css(element, 'borderLeftWidth')) + helper.toInt(DOM.css(element, 'borderRightWidth')))
+				- (helper.toInt(DOM.css(element, 'paddingLeft')) + helper.toInt(DOM.css(element, 'paddingRight')));
+		} else {
+			return element.offsetWidth
+		}
+
+	}
 };
-DOM.height = function(element, value) {
-	return helper.toInt(DOM.css(element, 'height', value));
+DOM.height = function (element, value) {
+	if (typeof getComputedStyle !== 'undefined') {
+		return helper.toInt(DOM.css(element, 'height', value));
+	} else {
+		if (value !== undefined) {
+			helper.toInt(DOM.css(element, 'height', value));
+		}
+		if ('content-box' === DOM.css(element, 'boxSizing')) {
+			return element.offsetHeight
+				- (helper.toInt(DOM.css(element, 'borderTopWidth')) + helper.toInt(DOM.css(element, 'borderBottomWidth')))
+				- (helper.toInt(DOM.css(element, 'paddingTop')) + helper.toInt(DOM.css(element, 'paddingBottom')));
+		} else {
+			return element.offsetHeight;
+		}
+
+	}
 };
-DOM.matches = function(element, query) {
+DOM.matches = function (element, query) {
 	if (typeof element.matches !== 'undefined') {
 		return element.matches(query);
 	} else {
@@ -72,7 +100,7 @@ DOM.matches = function(element, query) {
 	}
 };
 
-DOM.remove = function(element) {
+DOM.remove = function (element) {
 	if (typeof element.remove !== 'undefined') {
 		element.remove();
 	} else {
@@ -82,12 +110,12 @@ DOM.remove = function(element) {
 	}
 };
 
-DOM.queryChildren = function(element, selector) {
-	return Array.prototype.filter.call(element.childNodes, function(child) {
+DOM.queryChildren = function (element, selector) {
+	return Array.prototype.filter.call(element.childNodes, function (child) {
 		return DOM.matches(child, selector);
 	});
 };
-DOM.createEvent = function(name) {
+DOM.createEvent = function (name) {
 	var event;
 	if (document.createEvent) {
 		event = document.createEvent('Event');
@@ -99,7 +127,7 @@ DOM.createEvent = function(name) {
 	}
 	return event;
 };
-DOM.dispatchEvent = function(element, event) {
+DOM.dispatchEvent = function (element, event) {
 	if (document.createEventObject) {
 		//element.fireEvent('on' + event.type);
 	} else if (element.dispatchEvent) {
@@ -122,20 +150,24 @@ function addClass(element, className) {
 }
 
 function removeClass(element, className) {
-
-	if (element.classList) {
-		element.classList.remove(className);
+	var clses = className.split(' ');
+	if (clses.length > 1) {
+		clses.forEach(function (cls) {
+			removeClass(element, cls);
+		});
 	} else {
-		var classes = element.className.split(' ');
-		var idx = classes.indexOf(className);
-		if (idx >= 0) {
-			classes.splice(idx, 1);
+		if (element.classList) {
+			element.classList.remove(className);
+		} else {
+			var classes = element.className.split(' ');
+			var idx = classes.indexOf(className);
+			if (idx >= 0) {
+				classes.splice(idx, 1);
+			}
+			element.className = classes.join(' ');
 		}
-		element.className = classes.join(' ');
 	}
-
 }
-
 function listClass(element) {
 	if (element.classList) {
 		return Array.prototype.slice.apply(element.classList);

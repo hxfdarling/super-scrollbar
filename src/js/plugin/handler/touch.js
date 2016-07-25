@@ -138,7 +138,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 			startTime = (new Date()).getTime();
 			instance.animate.stop();
 
-			e.stopPropagation();
+			helper.stopPropagation(e);
 		}
 	}
 
@@ -170,8 +170,8 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 			}
 
 			if (shouldPreventDefault(differenceX, differenceY)) {
-				e.stopPropagation();
-				e.preventDefault();
+				helper.stopPropagation(e);
+				helper.preventDefault(e);
 			}
 		}
 	}
@@ -181,6 +181,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 		dom.removeClass(element, 'touch');
 		if (!inGlobalTouch && inLocalTouch) {
 			inLocalTouch = false;
+			console.log(speed);
 			momentun.start({
 				x: -speed.x,
 				y: -speed.y

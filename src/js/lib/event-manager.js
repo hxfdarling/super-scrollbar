@@ -13,21 +13,22 @@ EventElement.prototype.on = function (eventName, handler) {
 	if (this.element.addEventListener) {
 		this.element.addEventListener(eventName, handler, false);
 	} else if (this.element.attachEvent) {
-		this.element.attachEvent(eventName, handler);
+		this.element.attachEvent('on' + eventName, handler);
 	}
 
 };
 
 EventElement.prototype.off = function (eventName, handler) {
 	var isHandlerProvided = (typeof handler !== 'undefined');
+	var element = this.element;
 	this.events[eventName] = this.events[eventName].filter(function (hdlr) {
 		if (isHandlerProvided && hdlr !== handler) {
 			return true;
 		}
-		if (this.element.removeEventListener) {
-			this.element.removeEventListener(eventName, hdlr, false);
-		} else if (this.element.detachEvent) {
-			this.element.detachEvent(eventName, hdlr);
+		if (element.removeEventListener) {
+			element.removeEventListener(eventName, hdlr, false);
+		} else if (element.detachEvent) {
+			element.detachEvent('on'+eventName, hdlr);
 		}
 		return false;
 	}, this);

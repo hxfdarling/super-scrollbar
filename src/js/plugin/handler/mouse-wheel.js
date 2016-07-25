@@ -117,14 +117,16 @@ function bindMouseWheelHandler(element, instance) {
 		instance.animate.run(perporty);
 
 		if (shouldPreventDefault(deltaX, deltaY)) {
-			e.stopPropagation();
-			e.preventDefault();
+			helper.stopPropagation(e);
+			helper.preventDefault(e);
 		}
 	}
 
 	if (typeof window.onwheel !== "undefined") {
 		instance.event.on(element, 'wheel', mousewheelHandler);
 	} else if (typeof window.onmousewheel !== "undefined") {
+		instance.event.on(element, 'mousewheel', mousewheelHandler);
+	} else if (typeof instance.ownerDocument.onmousewheel !== 'undefined') {
 		instance.event.on(element, 'mousewheel', mousewheelHandler);
 	}
 }

@@ -22,9 +22,9 @@ function bindMouseScrollXHandler(element, instance) {
 	}
 
 	var mouseMoveHandler = function (e) {
-		updateScrollLeft(e.pageX - currentPageX);
-		e.stopPropagation();
-		e.preventDefault();
+		updateScrollLeft(helper.getPageX(e) - currentPageX);
+		helper.stopPropagation(e);
+		helper.preventDefault(e);
 	};
 
 	var mouseUpHandler = function () {
@@ -33,15 +33,15 @@ function bindMouseScrollXHandler(element, instance) {
 		instance.event.off(instance.ownerDocument, 'mousemove', mouseMoveHandler);
 	};
 	instance.event.on(instance.barX, 'mousedown', function (e) {
-		currentPageX = e.pageX;
+		currentPageX = helper.getPageX(e);
 		currentLeft = instance.barX.offsetLeft * instance.railXRatio;
 		instance.startScrolling('x');
 		dom.addClass(instance.barXRail, 'drag');
 		instance.event.on(instance.ownerDocument, 'mousemove', mouseMoveHandler);
 		instance.event.once(instance.ownerDocument, 'mouseup', mouseUpHandler);
 
-		e.stopPropagation();
-		e.preventDefault();
+		helper.stopPropagation(e);
+		helper.preventDefault(e);
 	});
 
 }
@@ -56,9 +56,9 @@ function bindMouseScrollYHandler(element, instance) {
 	}
 
 	var mouseMoveHandler = function (e) {
-		updateScrollTop(e.pageY - currentPageY);
-		e.stopPropagation();
-		e.preventDefault();
+		updateScrollTop(helper.getPageY(e) - currentPageY);
+		helper.stopPropagation(e);
+		helper.preventDefault(e);
 	};
 
 	var mouseUpHandler = function () {
@@ -68,14 +68,14 @@ function bindMouseScrollYHandler(element, instance) {
 	};
 
 	instance.event.on(instance.barY, 'mousedown', function (e) {
-		currentPageY = e.pageY;
+		currentPageY = helper.getPageY(e);
 		currentTop = instance.barY.offsetTop * instance.railYRatio;
 		instance.startScrolling('y');
 		dom.addClass(instance.barYRail, 'drag');
 		instance.event.on(instance.ownerDocument, 'mousemove', mouseMoveHandler);
 		instance.event.once(instance.ownerDocument, 'mouseup', mouseUpHandler);
-		e.stopPropagation();
-		e.preventDefault();
+		helper.stopPropagation(e);
+		helper.preventDefault(e);
 	});
 }
 

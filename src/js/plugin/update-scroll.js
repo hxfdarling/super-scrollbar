@@ -98,13 +98,17 @@ module.exports = function (element, axis, value) {
 		dom.dispatchEvent(element, rightEvent);
 	}
 	if (axis === 'top') {
-		element.scrollTop = lastTop = instance.currentTop = value;
+		instance.currentTop = lastTop = value;
+		updateBar(element);
+		element.scrollTop = instance.currentTop;
 		dom.dispatchEvent(element, yEvent);
 	}
 
 	if (axis === 'left') {
-		element.scrollLeft = lastLeft = instance.currentLeft = value;
+		instance.currentLeft = lastLeft = value;
+		updateBar(element);
+		element.scrollLeft = instance.currentLeft;
 		dom.dispatchEvent(element, xEvent);
 	}
-	updateBar(element);
+
 };

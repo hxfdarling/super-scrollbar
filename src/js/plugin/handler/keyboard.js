@@ -49,7 +49,7 @@ function bindKeyBoard(element) {
 
 	element.setAttribute('tabIndex', 0);
 	instance.event.on(element, 'keydown', function (event) {
-		if (helper.isEditable(event.target)) {
+		if (helper.isEditable(event.target || event.srcElement)) {
 			return;
 		}
 		var keyScrollIncrement = instance.config.keyScrollIncrement;

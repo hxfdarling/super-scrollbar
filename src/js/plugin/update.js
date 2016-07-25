@@ -22,7 +22,6 @@ module.exports = function(element) {
 
 	instance.containerWidth = dom.width(element);
 	instance.containerHeight = dom.height(element);
-	console.log(instance.containerHeight);
 	instance.maxLeft = Math.max(0, instance.contentWidth - instance.containerWidth);
 	instance.maxTop = Math.max(0, instance.contentHeight - instance.containerHeight);
 	instance.barYActive = instance.contentHeight > instance.containerHeight;

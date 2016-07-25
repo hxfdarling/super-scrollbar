@@ -7,7 +7,7 @@ if (typeof define === 'function' && define.amd) {
 	define(ss);
 } else {
 	// Add to a global object.
-	window.SuperScroll = ss;
+	window.SuperScrollbar = ss;
 	if (typeof window.Ss === 'undefined') {
 		window.Ss = ss;
 	}

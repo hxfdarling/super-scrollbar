@@ -25,6 +25,9 @@ var dom = require('../lib/dom');
 var helper = require('../lib/helper');
 module.exports = function (element, cfg) {
 	cfg = typeof cfg === 'object' ? cfg : {};
+	if (instances.get(element)) {
+		return;
+	}
 	var instance = instances.add(element, helper.apply(config, cfg));
 	instance.config.handlers.forEach(function (handlerName) {
 		handlers[handlerName](element);

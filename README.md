@@ -30,14 +30,14 @@
 
 	<script src='super-scrollbar.js'></script>
 
-### 初始化
+### initialize
   
     SuperScrollbar.initialize(document.querySelector('#id'));
     
-### 更新
+### update
 
     SuperScrollbar.update(document.querySelector('#id'));
     
-### 卸载
+### destroy
 
 	SuperScrollbar.destroy(document.querySelector('#id'));	

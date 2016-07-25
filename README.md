@@ -11,6 +11,8 @@
 
 不依赖与任何第三方库
 
+支持jquery插件调用
+
 ## About
 
   super-scrollbar.js is a small JavaScript library making dom scroll

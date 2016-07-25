@@ -11,7 +11,7 @@ module.exports = {
 	/**
 	 *  scroll bar min size (height or width)
 	 */
-	barMinSize: 50,
+	barMinSize: 20,
 	wheelSpeed: 1,
 	keyScrollIncrement: 100,//key step
 	autoHideBar: true,

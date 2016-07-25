@@ -40,6 +40,16 @@ function Instance(element, config) {
 	});
 	instance.ownerDocument = element.ownerDocument || document;
 	dom.addClass(element, 'super-scrollbar');
+	switch (dom.css(element, 'position')) {
+		case 'absolute':
+		case 'relative':
+		case 'fixed':
+			break;
+		default :
+			dom.addClass(element, 'ss-position');
+			break;
+
+	}
 	/*创建横向滚动条*/
 	instance.barXRail = dom.element('div', 'ss-scrollbar-x-rail');
 	dom.appendTo(instance.barXRail, element);
@@ -142,11 +152,15 @@ exports.remove = function (element) {
 	var instance = instances[getId(element)];
 	instance.barXRail.removeChild(instance.barX);
 	instance.barYRail.removeChild(instance.barY);
-	element.removeChild(instance.barXRail);
-	element.removeChild(instance.barYRail);
+	if (instance.barXRail.parentNode) {
+		instance.barXRail.parentNode.removeChild(instance.barXRail);
+	}
+	if (instance.barYRail.parentNode) {
+		instance.barYRail.parentNode.removeChild(instance.barYRail);
+	}
 	instance.event.offAll();
 	element.removeAttribute('tabIndex');
-	dom.removeClass(element, 'super-scrollbar ss-auto-hide ss-active-x ss-active-y touch selection');
+	dom.removeClass(element, 'super-scrollbar ss-auto-hide ss-active-x ss-active-y touch selection ss-position');
 	delete instances[getId(element)];
 	removeId(element);
 };

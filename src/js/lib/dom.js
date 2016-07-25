@@ -46,7 +46,7 @@ DOM.css = function (element, styleNameOrObject, styleValue) {
 		if (typeof styleValue === 'undefined') {
 			return cssGet(element, styleNameOrObject);
 		} else {
-			return cssSet(element, styleNameOrObject, isNaN(styleValue) ? 0 : styleValue);
+			return cssSet(element, styleNameOrObject, styleValue);
 		}
 	}
 };

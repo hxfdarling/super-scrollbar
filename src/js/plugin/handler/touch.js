@@ -181,7 +181,6 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 		dom.removeClass(element, 'touch');
 		if (!inGlobalTouch && inLocalTouch) {
 			inLocalTouch = false;
-			console.log(speed);
 			momentun.start({
 				x: -speed.x,
 				y: -speed.y

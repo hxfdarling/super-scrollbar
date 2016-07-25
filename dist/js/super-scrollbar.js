@@ -65,7 +65,7 @@ DOM.css = function (element, styleNameOrObject, styleValue) {
 		if (typeof styleValue === 'undefined') {
 			return cssGet(element, styleNameOrObject);
 		} else {
-			return cssSet(element, styleNameOrObject, isNaN(styleValue) ? 0 : styleValue);
+			return cssSet(element, styleNameOrObject, styleValue);
 		}
 	}
 };
@@ -768,7 +768,7 @@ module.exports = {
 	/**
 	 *  scroll bar min size (height or width)
 	 */
-	barMinSize: 50,
+	barMinSize: 20,
 	wheelSpeed: 1,
 	keyScrollIncrement: 100,//key step
 	autoHideBar: true,
@@ -1567,7 +1567,6 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 		dom.removeClass(element, 'touch');
 		if (!inGlobalTouch && inLocalTouch) {
 			inLocalTouch = false;
-			console.log(speed);
 			momentun.start({
 				x: -speed.x,
 				y: -speed.y
@@ -1706,6 +1705,16 @@ function Instance(element, config) {
 	});
 	instance.ownerDocument = element.ownerDocument || document;
 	dom.addClass(element, 'super-scrollbar');
+	switch (dom.css(element, 'position')) {
+		case 'absolute':
+		case 'relative':
+		case 'fixed':
+			break;
+		default :
+			dom.addClass(element, 'ss-position');
+			break;
+
+	}
 	/*创建横向滚动条*/
 	instance.barXRail = dom.element('div', 'ss-scrollbar-x-rail');
 	dom.appendTo(instance.barXRail, element);
@@ -1808,11 +1817,15 @@ exports.remove = function (element) {
 	var instance = instances[getId(element)];
 	instance.barXRail.removeChild(instance.barX);
 	instance.barYRail.removeChild(instance.barY);
-	element.removeChild(instance.barXRail);
-	element.removeChild(instance.barYRail);
+	if (instance.barXRail.parentNode) {
+		instance.barXRail.parentNode.removeChild(instance.barXRail);
+	}
+	if (instance.barYRail.parentNode) {
+		instance.barYRail.parentNode.removeChild(instance.barYRail);
+	}
 	instance.event.offAll();
 	element.removeAttribute('tabIndex');
-	dom.removeClass(element, 'super-scrollbar ss-auto-hide ss-active-x ss-active-y touch selection');
+	dom.removeClass(element, 'super-scrollbar ss-auto-hide ss-active-x ss-active-y touch selection ss-position');
 	delete instances[getId(element)];
 	removeId(element);
 };
@@ -1981,23 +1994,21 @@ var instances = require('./instances');
 var updateScroll = require('./update-scroll');
 var helper = require('../lib/helper');
 var dom = require('../lib/dom');
-module.exports = function (element) {
-	var instance = instances.get(element);
-	if (!instance) {
-		return;
-	}
-	instance.containerWidth = element.clientWidth;
-	instance.containerHeight = element.clientHeight;
-	instance.contentWidth = element.scrollWidth;
-	instance.contentHeight = element.scrollHeight;
-
+function updateHanlder(element, instance) {
 	instance.currentLeft = element.scrollLeft;
 	instance.currentTop = element.scrollTop;
+
+	instance.containerWidth = element.clientWidth;
+	instance.containerHeight = element.clientHeight;
+
+	instance.contentWidth = element.scrollWidth;
+	instance.contentHeight = element.scrollHeight;
 
 	instance.maxLeft = Math.max(0, instance.contentWidth - instance.containerWidth);
 	instance.maxTop = Math.max(0, instance.contentHeight - instance.containerHeight);
 	instance.barYActive = instance.contentHeight > instance.containerHeight;
 	instance.barXActive = instance.contentWidth > instance.containerWidth;
+
 	var railSize, barSize;
 	if (instance.barXActive) {
 		railSize = instance.containerWidth;
@@ -2008,7 +2019,7 @@ module.exports = function (element) {
 		dom.width(instance.barX, barSize);
 		instance.barXWidth = barSize;
 		instance.railXRatio = Math.max((instance.contentWidth - instance.containerWidth) / (railSize - barSize), 1);
-		updateScroll(element, 'left', instance.currentLeft);
+		//updateScroll(element, 'left', 0);
 	} else {
 		dom.removeClass(element, 'ss-active-x');
 	}
@@ -2023,9 +2034,16 @@ module.exports = function (element) {
 		instance.barYHeight = barSize;
 
 		instance.railYRatio = Math.max((instance.contentHeight - instance.containerHeight) / (railSize - barSize), 1);
-		updateScroll(element, 'top', instance.currentTop);
+		//updateScroll(element, 'top', 0);
 	} else {
 		dom.removeClass(element, 'ss-active-y');
 	}
+}
+module.exports = function (element) {
+	var instance = instances.get(element);
+	if (!instance) {
+		return;
+	}
+	updateHanlder(element, instance);
 };
 },{"../lib/dom":2,"../lib/helper":6,"./instances":19,"./update-scroll":21}]},{},[1]);

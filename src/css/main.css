@@ -11,9 +11,11 @@ body.scrolling {
 	touch-action: none;
 	overflow: hidden !important;
 	-ms-overflow-style: none;
-	position: relative;
 	-webkit-tap-highlight-color: transparent;
 	outline: none;
+}
+.super-scrollbar.ss-position{
+	position: relative;
 }
 
 .ss-content {
@@ -74,6 +76,7 @@ body.scrolling {
 	height: 15px;
 	cursor: pointer;
 	left: 0;
+	overflow: hidden;
 }
 
 .super-scrollbar > .ss-scrollbar-x-rail > .ss-scrollbar-x {
@@ -101,7 +104,7 @@ body.scrolling {
 	width: 15px;
 	cursor: pointer;
 	top: 0;
-
+	overflow: hidden;
 }
 
 .super-scrollbar > .ss-scrollbar-y-rail > .ss-scrollbar-y {

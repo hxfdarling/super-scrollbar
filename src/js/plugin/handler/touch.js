@@ -52,7 +52,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 	var momentun = {
 		_doing: false,
 		duration: 300,
-		start: function(speed) {
+		start: function (speed) {
 			this.lastPosition = [0, 0];
 			this.startTime = new Date().getTime();
 			var frame = {
@@ -66,16 +66,15 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 			this._doing = true;
 			helper.requestAnimationFrameHelper.call(window, this.step.bind(this));
 		},
-		getPosition: function(t) {
+		getPosition: function (t) {
 			var speed = this._frame.speed;
 			var accelerate = this._frame.accelerate;
-			var p = [
-				(Math.pow(speed.x, 2) - Math.pow(speed.x - t * accelerate.x, 2)) / (2 * accelerate.x),
-				(Math.pow(speed.y, 2) - Math.pow(speed.y - t * accelerate.y, 2)) / (2 * accelerate.y)
-			]
-			return p;
+			return [
+				speed.x == 0 ? 0 : (Math.pow(speed.x, 2) - Math.pow(speed.x - t * accelerate.x, 2)) / (2 * accelerate.x),
+				speed.y == 0 ? 0 : (Math.pow(speed.y, 2) - Math.pow(speed.y - t * accelerate.y, 2)) / (2 * accelerate.y)
+			];
 		},
-		step: function() {
+		step: function () {
 			if (!this._doing) {
 				return;
 			}
@@ -93,7 +92,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 				helper.requestAnimationFrameHelper.call(window, this.step.bind(this));
 			}
 		},
-		end: function() {
+		end: function () {
 			this._doing = false;
 		}
 	}
@@ -178,7 +177,6 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 	}
 
 
-
 	function touchEnd() {
 		dom.removeClass(element, 'touch');
 		if (!inGlobalTouch && inLocalTouch) {
@@ -219,7 +217,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 	}
 }
 
-module.exports = function(element) {
+module.exports = function (element) {
 	if (!helper.env.supportsTouch && !helper.env.supportsIePointer) {
 		return;
 	}

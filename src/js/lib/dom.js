@@ -2,13 +2,13 @@
 var helper = require('./helper');
 var DOM = {};
 
-DOM.element = function (tagName, className) {
+DOM.element = function(tagName, className) {
 	var element = document.createElement(tagName);
 	element.className = className;
 	return element;
 };
 
-DOM.appendTo = function (child, parent) {
+DOM.appendTo = function(child, parent) {
 	parent.appendChild(child);
 	return child;
 };
@@ -38,7 +38,7 @@ function cssMultiSet(element, obj) {
 	return element;
 }
 
-DOM.css = function (element, styleNameOrObject, styleValue) {
+DOM.css = function(element, styleNameOrObject, styleValue) {
 	if (typeof styleNameOrObject === 'object') {
 		// multiple set with object
 		return cssMultiSet(element, styleNameOrObject);
@@ -50,13 +50,13 @@ DOM.css = function (element, styleNameOrObject, styleValue) {
 		}
 	}
 };
-DOM.width = function (element, value) {
+DOM.width = function(element, value) {
 	return helper.toInt(DOM.css(element, 'width', value));
 };
-DOM.height = function (element, value) {
+DOM.height = function(element, value) {
 	return helper.toInt(DOM.css(element, 'height', value));
 };
-DOM.matches = function (element, query) {
+DOM.matches = function(element, query) {
 	if (typeof element.matches !== 'undefined') {
 		return element.matches(query);
 	} else {
@@ -72,7 +72,7 @@ DOM.matches = function (element, query) {
 	}
 };
 
-DOM.remove = function (element) {
+DOM.remove = function(element) {
 	if (typeof element.remove !== 'undefined') {
 		element.remove();
 	} else {
@@ -82,12 +82,12 @@ DOM.remove = function (element) {
 	}
 };
 
-DOM.queryChildren = function (element, selector) {
-	return Array.prototype.filter.call(element.childNodes, function (child) {
+DOM.queryChildren = function(element, selector) {
+	return Array.prototype.filter.call(element.childNodes, function(child) {
 		return DOM.matches(child, selector);
 	});
 };
-DOM.createEvent = function (name) {
+DOM.createEvent = function(name) {
 	var event;
 	if (document.createEvent) {
 		event = document.createEvent('Event');
@@ -99,7 +99,7 @@ DOM.createEvent = function (name) {
 	}
 	return event;
 };
-DOM.dispatchEvent = function (element, event) {
+DOM.dispatchEvent = function(element, event) {
 	if (document.createEventObject) {
 		//element.fireEvent('on' + event.type);
 	} else if (element.dispatchEvent) {

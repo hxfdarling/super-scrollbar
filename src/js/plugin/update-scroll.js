@@ -69,7 +69,7 @@ module.exports = function (element, axis, value) {
 			//fix edge buge
 			//value = element.scrollLeft;
 		} else {
-			dom.scrollLeft = value;
+			element.scrollLeft = value;
 		}
 		dom.dispatchEvent(element, xEndEvent);
 	}

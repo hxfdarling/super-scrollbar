@@ -8,9 +8,13 @@
 'use strict';
 var instances = require('../instances');
 var updateBar = require('../update-bar');
+var update = require('../update');
 function bindNativeScroll(element) {
 	var instance = instances.get(element);
-	instance.event.on(element,'scroll', function () {
+	instance.event.on(element, 'scroll', function () {
+		if(instance.config.autoUpdate) {
+			update(element);
+		}
 		if (instance.animate.isDoing()) {
 			return;
 		}

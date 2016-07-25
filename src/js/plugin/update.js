@@ -11,17 +11,19 @@ var instances = require('./instances');
 var updateScroll = require('./update-scroll');
 var helper = require('../lib/helper');
 var dom = require('../lib/dom');
-module.exports = function(element) {
+module.exports = function (element) {
 	var instance = instances.get(element);
 	if (!instance) {
 		return;
 	}
-	//采用本地化滚动
+	instance.containerWidth = element.clientWidth;
+	instance.containerHeight = element.clientHeight;
 	instance.contentWidth = element.scrollWidth;
 	instance.contentHeight = element.scrollHeight;
 
-	instance.containerWidth = dom.width(element);
-	instance.containerHeight = dom.height(element);
+	instance.currentLeft = element.scrollLeft;
+	instance.currentTop = element.scrollTop;
+
 	instance.maxLeft = Math.max(0, instance.contentWidth - instance.containerWidth);
 	instance.maxTop = Math.max(0, instance.contentHeight - instance.containerHeight);
 	instance.barYActive = instance.contentHeight > instance.containerHeight;
@@ -36,7 +38,7 @@ module.exports = function(element) {
 		dom.width(instance.barX, barSize);
 		instance.barXWidth = barSize;
 		instance.railXRatio = Math.max((instance.contentWidth - instance.containerWidth) / (railSize - barSize), 1);
-		updateScroll(element, 'left', 0);
+		updateScroll(element, 'left', instance.currentLeft);
 	} else {
 		dom.removeClass(element, 'ss-active-x');
 	}
@@ -51,7 +53,7 @@ module.exports = function(element) {
 		instance.barYHeight = barSize;
 
 		instance.railYRatio = Math.max((instance.contentHeight - instance.containerHeight) / (railSize - barSize), 1);
-		updateScroll(element, 'top', 0);
+		updateScroll(element, 'top', instance.currentTop);
 	} else {
 		dom.removeClass(element, 'ss-active-y');
 	}

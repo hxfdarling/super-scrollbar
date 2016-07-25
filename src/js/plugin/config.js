@@ -14,13 +14,9 @@ module.exports = {
 	barMinSize: 50,
 	wheelSpeed: 1,
 	keyScrollIncrement: 100,//key step
-	/*
-	 position of scroll bar relative to content
-	 values (string): "inside", "outside" (requires elements with not position:static)
-	 */
-	barPosition: "inside",
 	autoHideBar: true,
 	stopPropagationOnClick: true,
 	wheelPropagation: true,
-	swipePropagation:true
+	swipePropagation:true,
+	autoUpdate:true//自动更新
 };

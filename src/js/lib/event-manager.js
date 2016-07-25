@@ -24,7 +24,7 @@ EventElement.prototype.off = function (eventName, handler) {
 		if (isHandlerProvided && hdlr !== handler) {
 			return true;
 		}
-		if (this.element.removeListener) {
+		if (this.element.removeEventListener) {
 			this.element.removeEventListener(eventName, hdlr, false);
 		} else if (this.element.detachEvent) {
 			this.element.detachEvent(eventName, hdlr);

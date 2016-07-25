@@ -185,5 +185,4 @@ DOM.addClass = addClass;
 DOM.removeClass = removeClass;
 DOM.hasClass = hasClass;
 
-window.dom = DOM;
 module.exports = DOM;

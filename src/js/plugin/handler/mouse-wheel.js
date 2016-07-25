@@ -101,9 +101,9 @@ function bindMouseWheelHandler(element, instance) {
 			perporty.left = {delta: -(deltaX * instance.config.wheelSpeed)};
 		} else if (instance.barYActive && !instance.barXActive) {
 			if (deltaY) {
-				newTop = (deltaY * instance.config.wheelSpeed)
+				newTop = -(deltaY * instance.config.wheelSpeed)
 			} else {
-				newTop = (deltaX * instance.config.wheelSpeed);
+				newTop = -(deltaX * instance.config.wheelSpeed);
 			}
 			perporty.top = {delta: newTop};
 		} else if (instance.barXActive && !instance.barYActive) {

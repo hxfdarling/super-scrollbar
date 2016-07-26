@@ -789,6 +789,7 @@ module.exports = {
 	stopPropagationOnClick: true,
 	wheelPropagation: true,
 	swipePropagation:true,
+	forceUpdate:true,
 	autoUpdate:true//自动更新
 };
 },{}],9:[function(require,module,exports){
@@ -1829,15 +1830,14 @@ exports.add = function (element, config) {
 
 exports.remove = function (element) {
 	var instance = instances[getId(element)];
-	instance.barXRail.removeChild(instance.barX);
-	instance.barYRail.removeChild(instance.barY);
-	if (instance.barXRail.parentNode) {
-		instance.barXRail.parentNode.removeChild(instance.barXRail);
-	}
-	if (instance.barYRail.parentNode) {
-		instance.barYRail.parentNode.removeChild(instance.barYRail);
-	}
 	instance.event.offAll();
+
+	dom.remove(instance.barX);
+	dom.remove(instance.barY);
+	dom.remove(instance.barXRail);
+	dom.remove(instance.barYRail);
+
+
 	element.removeAttribute('tabIndex');
 	dom.removeClass(element, 'super-scrollbar ss-auto-hide ss-active-x ss-active-y touch selection ss-position');
 	delete instances[getId(element)];
@@ -2005,18 +2005,28 @@ module.exports = function (element, axis, value) {
 'use strict';
 
 var instances = require('./instances');
-var updateScroll = require('./update-scroll');
 var helper = require('../lib/helper');
 var dom = require('../lib/dom');
+function updateRect(element, instance) {
+	if (instance.config.forceUpdate) {
+		//修复在chrome中overflow:hidden，情况下scrollHeight不能正确获取
+		var tmp = dom.element('div', '');
+		dom.appendTo(tmp, element);
+		instance.contentHeight = tmp.offsetTop;
+		dom.remove(tmp);
+	} else {
+		instance.contentHeight = element.scrollHeight;
+	}
+	instance.contentWidth = element.scrollWidth;
+
+	instance.containerWidth = element.clientWidth;
+	instance.containerHeight = element.clientHeight;
+}
 function updateHanlder(element, instance) {
 	instance.currentLeft = element.scrollLeft;
 	instance.currentTop = element.scrollTop;
 
-	instance.containerWidth = element.clientWidth;
-	instance.containerHeight = element.clientHeight;
-
-	instance.contentWidth = element.scrollWidth;
-	instance.contentHeight = element.scrollHeight;
+	updateRect(element, instance);
 
 	instance.maxLeft = Math.max(0, instance.contentWidth - instance.containerWidth);
 	instance.maxTop = Math.max(0, instance.contentHeight - instance.containerHeight);
@@ -2060,4 +2070,4 @@ module.exports = function (element) {
 	}
 	updateHanlder(element, instance);
 };
-},{"../lib/dom":2,"../lib/helper":6,"./instances":18,"./update-scroll":20}]},{},[1]);
+},{"../lib/dom":2,"../lib/helper":6,"./instances":18}]},{},[1]);

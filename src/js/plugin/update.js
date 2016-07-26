@@ -8,18 +8,28 @@
 'use strict';
 
 var instances = require('./instances');
-var updateScroll = require('./update-scroll');
 var helper = require('../lib/helper');
 var dom = require('../lib/dom');
+function updateRect(element, instance) {
+	if (instance.config.forceUpdate) {
+		//修复在chrome中overflow:hidden，情况下scrollHeight不能正确获取
+		var tmp = dom.element('div', '');
+		dom.appendTo(tmp, element);
+		instance.contentHeight = tmp.offsetTop;
+		dom.remove(tmp);
+	} else {
+		instance.contentHeight = element.scrollHeight;
+	}
+	instance.contentWidth = element.scrollWidth;
+
+	instance.containerWidth = element.clientWidth;
+	instance.containerHeight = element.clientHeight;
+}
 function updateHanlder(element, instance) {
 	instance.currentLeft = element.scrollLeft;
 	instance.currentTop = element.scrollTop;
 
-	instance.containerWidth = element.clientWidth;
-	instance.containerHeight = element.clientHeight;
-
-	instance.contentWidth = element.scrollWidth;
-	instance.contentHeight = element.scrollHeight;
+	updateRect(element, instance);
 
 	instance.maxLeft = Math.max(0, instance.contentWidth - instance.containerWidth);
 	instance.maxTop = Math.max(0, instance.contentHeight - instance.containerHeight);

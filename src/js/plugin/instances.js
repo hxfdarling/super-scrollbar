@@ -150,15 +150,14 @@ exports.add = function (element, config) {
 
 exports.remove = function (element) {
 	var instance = instances[getId(element)];
-	instance.barXRail.removeChild(instance.barX);
-	instance.barYRail.removeChild(instance.barY);
-	if (instance.barXRail.parentNode) {
-		instance.barXRail.parentNode.removeChild(instance.barXRail);
-	}
-	if (instance.barYRail.parentNode) {
-		instance.barYRail.parentNode.removeChild(instance.barYRail);
-	}
 	instance.event.offAll();
+
+	dom.remove(instance.barX);
+	dom.remove(instance.barY);
+	dom.remove(instance.barXRail);
+	dom.remove(instance.barYRail);
+
+
 	element.removeAttribute('tabIndex');
 	dom.removeClass(element, 'super-scrollbar ss-auto-hide ss-active-x ss-active-y touch selection ss-position');
 	delete instances[getId(element)];

@@ -18,5 +18,6 @@ module.exports = {
 	stopPropagationOnClick: true,
 	wheelPropagation: true,
 	swipePropagation:true,
+	forceUpdate:true,
 	autoUpdate:true//自动更新
 };

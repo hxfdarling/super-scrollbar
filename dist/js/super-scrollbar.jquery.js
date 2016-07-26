@@ -58,6 +58,31 @@ DOM.appendTo = function (child, parent) {
 	return child;
 };
 
+DOM.remove = function (element) {
+	if (typeof element.remove !== 'undefined') {
+		element.remove();
+	} else {
+		if (element.parentNode) {
+			element.parentNode.removeChild(element);
+		}
+	}
+};
+
+DOM.wrap = function (element, parent) {
+	var cp = element.parentNode;
+	parent.appendChild(element);
+	cp.appendChild(parent);
+};
+DOM.unwrap = function (element) {
+	var cp = element.parentNode;
+	var parent;
+	if (cp && cp.parentNode) {
+		parent = cp.parentNode;
+		parent.appendChild(element);
+		DOM.remove(cp);
+	}
+};
+
 function cssGet(element, styleName) {
 	if (window.getComputedStyle) {
 		return window.getComputedStyle(element)[styleName];
@@ -145,16 +170,6 @@ DOM.matches = function (element, query) {
 	}
 };
 
-DOM.remove = function (element) {
-	if (typeof element.remove !== 'undefined') {
-		element.remove();
-	} else {
-		if (element.parentNode) {
-			element.parentNode.removeChild(element);
-		}
-	}
-};
-
 DOM.queryChildren = function (element, selector) {
 	return Array.prototype.filter.call(element.childNodes, function (child) {
 		return DOM.matches(child, selector);
@@ -180,7 +195,7 @@ DOM.dispatchEvent = function (element, event) {
 	}
 };
 
-function addClass(element, className) {
+DOM.addClass = function (element, className) {
 
 	if (element.classList) {
 		element.classList.add(className);
@@ -192,13 +207,13 @@ function addClass(element, className) {
 		element.className = classes.join(' ');
 	}
 
-}
+};
 
-function removeClass(element, className) {
+DOM.removeClass = function (element, className) {
 	var clses = className.split(' ');
 	if (clses.length > 1) {
 		clses.forEach(function (cls) {
-			removeClass(element, cls);
+			DOM.removeClass(element, cls);
 		});
 	} else {
 		if (element.classList) {
@@ -212,23 +227,20 @@ function removeClass(element, className) {
 			element.className = classes.join(' ');
 		}
 	}
-}
-function listClass(element) {
+};
+DOM.listClass = function (element) {
 	if (element.classList) {
 		return Array.prototype.slice.apply(element.classList);
 	} else {
 		return element.className.split(' ');
 	}
-}
+};
 
-function hasClass(element, className) {
-	var cls = listClass(element);
+DOM.hasClass = function (element, className) {
+	var cls = DOM.listClass(element);
 	return (cls.indexOf(className));
-}
+};
 
-DOM.addClass = addClass;
-DOM.removeClass = removeClass;
-DOM.hasClass = hasClass;
 
 module.exports = DOM;
 },{"./helper":6}],3:[function(require,module,exports){
@@ -778,7 +790,8 @@ exports.env = {
  */
 'use strict';
 module.exports = {
-	handlers: ['click-rail', 'drag-bar', 'keyboard', 'wheel', 'touch','selection'],
+	handlers: ['click-rail', 'drag-bar', 'keyboard', 'wheel', 'touch', 'selection'],
+	wrapElement: false,//是否包裹滚动元素,可以解决在ie8，ie9下面滚动条抖动问题,但是会对被滚动元素包裹一层div
 	/**
 	 *  scroll bar min size (height or width)
 	 */
@@ -788,9 +801,9 @@ module.exports = {
 	autoHideBar: true,
 	stopPropagationOnClick: true,
 	wheelPropagation: true,
-	swipePropagation:true,
-	forceUpdate:true,
-	autoUpdate:true//自动更新
+	swipePropagation: true,
+	forceUpdate: true,//如果需要对textArea进行滚动操作，需要注意将wrapElement开启，并将此项关闭
+	autoUpdate: true//自动更新
 };
 },{}],9:[function(require,module,exports){
 /**
@@ -1323,7 +1336,7 @@ function bindSelectionHandler(element, instance) {
 	}
 	if (dom.css(element, 'overflow') === 'auto') {//本地滚动的selection修复
 		instance.event.on(element, 'mousedown', function () {
-			dom.addClass(element, 'selection');
+			dom.addClass(instance.wrapElement, 'selection');
 		});
 	}
 	instance.event.on(window, 'mouseup', function () {
@@ -1332,7 +1345,7 @@ function bindSelectionHandler(element, instance) {
 			isSelected = false;
 			stopScrolling();
 		}
-		dom.removeClass(element, 'selection');
+		dom.removeClass(instance.wrapElement, 'selection');
 	});
 	instance.event.on(window, 'blur', function () {
 		mousedown = false;
@@ -1527,7 +1540,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 
 	function touchStart(e) {
 		momentun.end();
-		dom.addClass(element, 'touch');
+		dom.addClass(instance.wrapElement, 'touch');
 		if (shouldHandle(e)) {
 			inLocalTouch = true;
 
@@ -1579,7 +1592,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 
 
 	function touchEnd() {
-		dom.removeClass(element, 'touch');
+		dom.removeClass(instance.wrapElement, 'touch');
 		if (!inGlobalTouch && inLocalTouch) {
 			inLocalTouch = false;
 			momentun.start({
@@ -1672,9 +1685,6 @@ module.exports = function (element, cfg) {
 				break;
 		}
 	};
-	if (instance.config.autoHideBar) {
-		dom.addClass(element, 'ss-auto-hide');
-	}
 	update(element);
 };
 },{"../lib/dom":2,"../lib/fixed":4,"../lib/helper":6,"./config":8,"./handler/click-rail":10,"./handler/drag-bar":11,"./handler/keyboard":12,"./handler/mouse-wheel":13,"./handler/native-scroll":14,"./handler/selection":15,"./handler/touch":16,"./instances":18,"./update":21,"./update-scroll":20}],18:[function(require,module,exports){
@@ -1719,20 +1729,31 @@ function Instance(element, config) {
 		currentTop: 0
 	});
 	instance.ownerDocument = element.ownerDocument || document;
-	dom.addClass(element, 'super-scrollbar');
+
+	dom.addClass(element, 'super-scrollbar-box');
+	var wrapElement = element;
+	if (instance.config.wrapElement) {
+		wrapElement = dom.element('div', 'super-scrollbar-wrap');
+		dom.wrap(element, wrapElement);
+	}
+	dom.addClass(wrapElement, 'super-scrollbar');
+	if (!instance.config.autoHideBar) {
+		dom.addClass(wrapElement, 'ss-no-auto-hide');
+	}
 	switch (dom.css(element, 'position')) {
 		case 'absolute':
 		case 'relative':
 		case 'fixed':
 			break;
 		default :
-			dom.addClass(element, 'ss-position');
+			dom.addClass(wrapElement, 'ss-position');
 			break;
 
 	}
+	instance.wrapElement = wrapElement;
 	/*创建横向滚动条*/
 	instance.barXRail = dom.element('div', 'ss-scrollbar-x-rail');
-	dom.appendTo(instance.barXRail, element);
+	dom.appendTo(instance.barXRail, wrapElement);
 	instance.event.on(instance.barXRail, 'focus', function () {
 		dom.addClass(instance.barXRail, 'ss-focus');
 	});
@@ -1742,12 +1763,12 @@ function Instance(element, config) {
 	instance.barX = dom.element('div', 'ss-scrollbar-x');
 	dom.appendTo(instance.barX, instance.barXRail);
 	instance.railXWidth = null;
-	instance.railXRatio = null;
+	instance.railXRatio = 1;
 	instance.barXActive = false;
 	instance.barXWidth = null;
 	/*创建垂直滚动条*/
 	instance.barYRail = dom.element('div', 'ss-scrollbar-y-rail');
-	dom.appendTo(instance.barYRail, element);
+	dom.appendTo(instance.barYRail, wrapElement);
 	instance.event.on(instance.barYRail, 'focus', function () {
 		dom.addClass(instance.barYRail, 'ss-focus');
 	});
@@ -1757,7 +1778,7 @@ function Instance(element, config) {
 	instance.barY = dom.element('div', 'ss-scrollbar-y');
 	dom.appendTo(instance.barY, instance.barYRail);
 	instance.railYHeight = null;
-	instance.railYRatio = null;
+	instance.railYRatio = 1;
 	instance.barYActive = false;
 	instance.barYWidth = null;
 }
@@ -1789,22 +1810,22 @@ Instance.prototype = {
 		this.currentLeft = this.getTrueLeft(newLeft);
 	},
 	startScrolling: function (axis) {
-		dom.addClass(this.element, 'ss-in-scrolling');
+		dom.addClass(this.wrapElement, 'ss-in-scrolling');
 		if (typeof axis !== 'undefined') {
-			dom.addClass(this.element, 'ss-' + axis);
+			dom.addClass(this.wrapElement, 'ss-' + axis);
 		} else {
-			dom.addClass(this.element, 'ss-x');
-			dom.addClass(this.element, 'ss-y');
+			dom.addClass(this.wrapElement, 'ss-x');
+			dom.addClass(this.wrapElement, 'ss-y');
 		}
 	},
 
 	stopScrolling: function (axis) {
-		dom.removeClass(this.element, 'ss-in-scrolling');
+		dom.removeClass(this.wrapElement, 'ss-in-scrolling');
 		if (typeof axis !== 'undefined') {
-			dom.removeClass(this.element, 'ss-' + axis);
+			dom.removeClass(this.wrapElement, 'ss-' + axis);
 		} else {
-			dom.removeClass(this.element, 'ss-x');
-			dom.removeClass(this.element, 'ss-y');
+			dom.removeClass(this.wrapElement, 'ss-x');
+			dom.removeClass(this.wrapElement, 'ss-y');
 		}
 	}
 
@@ -1836,10 +1857,12 @@ exports.remove = function (element) {
 	dom.remove(instance.barY);
 	dom.remove(instance.barXRail);
 	dom.remove(instance.barYRail);
-
+	if (instance.config.wrapElement) {
+		dom.unwrap(element);
+	}
 
 	element.removeAttribute('tabIndex');
-	dom.removeClass(element, 'super-scrollbar ss-auto-hide ss-active-x ss-active-y touch selection ss-position');
+	dom.removeClass(element, 'super-scrollbar ss-no-auto-hide super-scrollbar-box ss-active-x ss-active-y touch selection ss-position');
 	delete instances[getId(element)];
 	removeId(element);
 };
@@ -1864,18 +1887,23 @@ module.exports = function (element) {
 	if (instance.barYActive) {
 		value = instance.currentTop;
 		dom.css(instance.barY, 'top', value / instance.railYRatio);
-		dom.css(instance.barYRail, 'top', value);
-		if (instance.barXActive) {
-			dom.css(instance.barXRail, 'bottom', -value);
-		}
+
 	}
 
 	if (instance.barXActive) {
 		value = instance.currentLeft;
 		dom.css(instance.barX, 'left', value / instance.railXRatio);
-		dom.css(instance.barXRail, 'left', value);
+
+	}
+	/*更新rail位置*/
+	if (!instance.config.wrapElement) {
 		if (instance.barYActive) {
-			dom.css(instance.barYRail, 'right', -value);
+			dom.css(instance.barYRail, 'top', instance.currentTop);
+			dom.css(instance.barYRail, 'right', -instance.currentLeft);
+		}
+		if (instance.barXActive) {
+			dom.css(instance.barXRail, 'left', instance.currentLeft);
+			dom.css(instance.barXRail, 'bottom', -instance.currentTop);
 		}
 	}
 };
@@ -2007,6 +2035,7 @@ module.exports = function (element, axis, value) {
 var instances = require('./instances');
 var helper = require('../lib/helper');
 var dom = require('../lib/dom');
+var updateScroll = require('./update-scroll');
 function updateRect(element, instance) {
 	if (instance.config.forceUpdate) {
 		//修复在chrome中overflow:hidden，情况下scrollHeight不能正确获取
@@ -2034,22 +2063,24 @@ function updateHanlder(element, instance) {
 	instance.barXActive = instance.contentWidth > instance.containerWidth;
 
 	var railSize, barSize;
+	var wrapElement = instance.wrapElement;
 	if (instance.barXActive) {
 		railSize = instance.containerWidth;
-		dom.addClass(element, 'ss-active-x');
+		dom.addClass(wrapElement, 'ss-active-x');
 		dom.width(instance.barXRail, railSize);
 		instance.railXWidth = railSize;
 		barSize = Math.max(instance.containerWidth / instance.contentWidth * railSize, instance.config.barMinSize);
 		dom.width(instance.barX, barSize);
 		instance.barXWidth = barSize;
 		instance.railXRatio = Math.max((instance.contentWidth - instance.containerWidth) / (railSize - barSize), 1);
-		//updateScroll(element, 'left', 0);
+		updateScroll(element, 'left', instance.currentLeft);
 	} else {
-		dom.removeClass(element, 'ss-active-x');
+		instance.currentLeft = 0;
+		dom.removeClass(wrapElement, 'ss-active-x');
 	}
 
 	if (instance.barYActive) {
-		dom.addClass(element, 'ss-active-y');
+		dom.addClass(wrapElement, 'ss-active-y');
 		railSize = instance.containerHeight;
 		dom.height(instance.barYRail, railSize);
 		instance.railYHeight = railSize;
@@ -2058,9 +2089,10 @@ function updateHanlder(element, instance) {
 		instance.barYHeight = barSize;
 
 		instance.railYRatio = Math.max((instance.contentHeight - instance.containerHeight) / (railSize - barSize), 1);
-		//updateScroll(element, 'top', 0);
+		updateScroll(element, 'top', instance.currentTop);
 	} else {
-		dom.removeClass(element, 'ss-active-y');
+		instance.currentTop = 0;
+		dom.removeClass(wrapElement, 'ss-active-y');
 	}
 }
 module.exports = function (element) {
@@ -2070,4 +2102,4 @@ module.exports = function (element) {
 	}
 	updateHanlder(element, instance);
 };
-},{"../lib/dom":2,"../lib/helper":6,"./instances":18}]},{},[1]);
+},{"../lib/dom":2,"../lib/helper":6,"./instances":18,"./update-scroll":20}]},{},[1]);

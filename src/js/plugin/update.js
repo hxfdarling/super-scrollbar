@@ -10,6 +10,7 @@
 var instances = require('./instances');
 var helper = require('../lib/helper');
 var dom = require('../lib/dom');
+var updateScroll = require('./update-scroll');
 function updateRect(element, instance) {
 	if (instance.config.forceUpdate) {
 		//修复在chrome中overflow:hidden，情况下scrollHeight不能正确获取
@@ -37,22 +38,24 @@ function updateHanlder(element, instance) {
 	instance.barXActive = instance.contentWidth > instance.containerWidth;
 
 	var railSize, barSize;
+	var wrapElement = instance.wrapElement;
 	if (instance.barXActive) {
 		railSize = instance.containerWidth;
-		dom.addClass(element, 'ss-active-x');
+		dom.addClass(wrapElement, 'ss-active-x');
 		dom.width(instance.barXRail, railSize);
 		instance.railXWidth = railSize;
 		barSize = Math.max(instance.containerWidth / instance.contentWidth * railSize, instance.config.barMinSize);
 		dom.width(instance.barX, barSize);
 		instance.barXWidth = barSize;
 		instance.railXRatio = Math.max((instance.contentWidth - instance.containerWidth) / (railSize - barSize), 1);
-		//updateScroll(element, 'left', 0);
+		updateScroll(element, 'left', instance.currentLeft);
 	} else {
-		dom.removeClass(element, 'ss-active-x');
+		instance.currentLeft = 0;
+		dom.removeClass(wrapElement, 'ss-active-x');
 	}
 
 	if (instance.barYActive) {
-		dom.addClass(element, 'ss-active-y');
+		dom.addClass(wrapElement, 'ss-active-y');
 		railSize = instance.containerHeight;
 		dom.height(instance.barYRail, railSize);
 		instance.railYHeight = railSize;
@@ -61,9 +64,10 @@ function updateHanlder(element, instance) {
 		instance.barYHeight = barSize;
 
 		instance.railYRatio = Math.max((instance.contentHeight - instance.containerHeight) / (railSize - barSize), 1);
-		//updateScroll(element, 'top', 0);
+		updateScroll(element, 'top', instance.currentTop);
 	} else {
-		dom.removeClass(element, 'ss-active-y');
+		instance.currentTop = 0;
+		dom.removeClass(wrapElement, 'ss-active-y');
 	}
 }
 module.exports = function (element) {

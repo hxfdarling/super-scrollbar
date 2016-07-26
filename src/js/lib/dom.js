@@ -13,6 +13,31 @@ DOM.appendTo = function (child, parent) {
 	return child;
 };
 
+DOM.remove = function (element) {
+	if (typeof element.remove !== 'undefined') {
+		element.remove();
+	} else {
+		if (element.parentNode) {
+			element.parentNode.removeChild(element);
+		}
+	}
+};
+
+DOM.wrap = function (element, parent) {
+	var cp = element.parentNode;
+	parent.appendChild(element);
+	cp.appendChild(parent);
+};
+DOM.unwrap = function (element) {
+	var cp = element.parentNode;
+	var parent;
+	if (cp && cp.parentNode) {
+		parent = cp.parentNode;
+		parent.appendChild(element);
+		DOM.remove(cp);
+	}
+};
+
 function cssGet(element, styleName) {
 	if (window.getComputedStyle) {
 		return window.getComputedStyle(element)[styleName];
@@ -100,16 +125,6 @@ DOM.matches = function (element, query) {
 	}
 };
 
-DOM.remove = function (element) {
-	if (typeof element.remove !== 'undefined') {
-		element.remove();
-	} else {
-		if (element.parentNode) {
-			element.parentNode.removeChild(element);
-		}
-	}
-};
-
 DOM.queryChildren = function (element, selector) {
 	return Array.prototype.filter.call(element.childNodes, function (child) {
 		return DOM.matches(child, selector);
@@ -135,7 +150,7 @@ DOM.dispatchEvent = function (element, event) {
 	}
 };
 
-function addClass(element, className) {
+DOM.addClass = function (element, className) {
 
 	if (element.classList) {
 		element.classList.add(className);
@@ -147,13 +162,13 @@ function addClass(element, className) {
 		element.className = classes.join(' ');
 	}
 
-}
+};
 
-function removeClass(element, className) {
+DOM.removeClass = function (element, className) {
 	var clses = className.split(' ');
 	if (clses.length > 1) {
 		clses.forEach(function (cls) {
-			removeClass(element, cls);
+			DOM.removeClass(element, cls);
 		});
 	} else {
 		if (element.classList) {
@@ -167,22 +182,19 @@ function removeClass(element, className) {
 			element.className = classes.join(' ');
 		}
 	}
-}
-function listClass(element) {
+};
+DOM.listClass = function (element) {
 	if (element.classList) {
 		return Array.prototype.slice.apply(element.classList);
 	} else {
 		return element.className.split(' ');
 	}
-}
+};
 
-function hasClass(element, className) {
-	var cls = listClass(element);
+DOM.hasClass = function (element, className) {
+	var cls = DOM.listClass(element);
 	return (cls.indexOf(className));
-}
+};
 
-DOM.addClass = addClass;
-DOM.removeClass = removeClass;
-DOM.hasClass = hasClass;
 
 module.exports = DOM;

@@ -64,7 +64,7 @@ function bindSelectionHandler(element, instance) {
 	}
 	if (dom.css(element, 'overflow') === 'auto') {//本地滚动的selection修复
 		instance.event.on(element, 'mousedown', function () {
-			dom.addClass(element, 'selection');
+			dom.addClass(instance.wrapElement, 'selection');
 		});
 	}
 	instance.event.on(window, 'mouseup', function () {
@@ -73,7 +73,7 @@ function bindSelectionHandler(element, instance) {
 			isSelected = false;
 			stopScrolling();
 		}
-		dom.removeClass(element, 'selection');
+		dom.removeClass(instance.wrapElement, 'selection');
 	});
 	instance.event.on(window, 'blur', function () {
 		mousedown = false;

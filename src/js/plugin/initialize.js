@@ -45,8 +45,5 @@ module.exports = function (element, cfg) {
 				break;
 		}
 	};
-	if (instance.config.autoHideBar) {
-		dom.addClass(element, 'ss-auto-hide');
-	}
 	update(element);
 };

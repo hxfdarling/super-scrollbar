@@ -7,7 +7,11 @@ body.scrolling {
   user-select: none;
   cursor: pointer; }
 
-.super-scrollbar {
+.super-scrollbar-wrap {
+  position: relative;
+  display: inline-block; }
+
+.super-scrollbar-box {
   -ms-touch-action: none;
   touch-action: none;
   overflow: hidden !important;
@@ -15,21 +19,23 @@ body.scrolling {
   -webkit-tap-highlight-color: transparent;
   outline: none; }
 
-.super-scrollbar.ss-position {
+.super-scrollbar.ss-position > .super-scrollbar-box,
+.super-scrollbar-box.ss-position {
   position: relative; }
 
 .ss-content {
   display: inline-block; }
 
 @supports (-ms-overflow-style: none) {
-  .super-scrollbar {
+  .super-scrollbar-box {
     overflow: auto !important; } }
 
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
-  .super-scrollbar {
+  .super-scrollbar-box {
     overflow: auto !important; } }
 
-.super-scrollbar.selection {
+.super-scrollbar.selection,
+.super-scrollbar.selection > .super-scrollbar-box {
   overflow: hidden !important; }
 
 .super-scrollbar.ss-active-x > .ss-scrollbar-x-rail,
@@ -141,6 +147,8 @@ body.scrolling {
 .super-scrollbar:hover.ss-in-scrolling.ss-y > .ss-scrollbar-y-rail > .ss-scrollbar-y {
   background-color: #999; }
 
+.super-scrollbar.ss-no-auto-hide > .ss-scrollbar-x-rail,
+.super-scrollbar.ss-no-auto-hide > .ss-scrollbar-y-rail,
 .super-scrollbar.touch > .ss-scrollbar-x-rail,
 .super-scrollbar.touch > .ss-scrollbar-y-rail,
 .super-scrollbar:hover > .ss-scrollbar-x-rail,

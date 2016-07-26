@@ -126,7 +126,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 
 	function touchStart(e) {
 		momentun.end();
-		dom.addClass(element, 'touch');
+		dom.addClass(instance.wrapElement, 'touch');
 		if (shouldHandle(e)) {
 			inLocalTouch = true;
 
@@ -178,7 +178,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 
 
 	function touchEnd() {
-		dom.removeClass(element, 'touch');
+		dom.removeClass(instance.wrapElement, 'touch');
 		if (!inGlobalTouch && inLocalTouch) {
 			inLocalTouch = false;
 			momentun.start({

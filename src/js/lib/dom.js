@@ -2,18 +2,18 @@
 var helper = require('./helper');
 var DOM = {};
 
-DOM.element = function (tagName, className) {
+DOM.element = function(tagName, className) {
 	var element = document.createElement(tagName);
-	element.className = className;
+	className && (element.className = className);
 	return element;
 };
 
-DOM.appendTo = function (child, parent) {
+DOM.appendTo = function(child, parent) {
 	parent.appendChild(child);
 	return child;
 };
 
-DOM.remove = function (element) {
+DOM.remove = function(element) {
 	if (typeof element.remove !== 'undefined') {
 		element.remove();
 	} else {
@@ -23,12 +23,12 @@ DOM.remove = function (element) {
 	}
 };
 
-DOM.wrap = function (element, parent) {
+DOM.wrap = function(element, parent) {
 	var cp = element.parentNode;
 	parent.appendChild(element);
 	cp.appendChild(parent);
 };
-DOM.unwrap = function (element) {
+DOM.unwrap = function(element) {
 	var cp = element.parentNode;
 	var parent;
 	if (cp && cp.parentNode) {
@@ -63,7 +63,7 @@ function cssMultiSet(element, obj) {
 	return element;
 }
 
-DOM.css = function (element, styleNameOrObject, styleValue) {
+DOM.css = function(element, styleNameOrObject, styleValue) {
 	if (typeof styleNameOrObject === 'object') {
 		// multiple set with object
 		return cssMultiSet(element, styleNameOrObject);
@@ -75,7 +75,7 @@ DOM.css = function (element, styleNameOrObject, styleValue) {
 		}
 	}
 };
-DOM.width = function (element, value) {
+DOM.width = function(element, value) {
 	if (typeof getComputedStyle !== 'undefined') {
 		return helper.toInt(DOM.css(element, 'width', value));
 	} else {
@@ -83,16 +83,14 @@ DOM.width = function (element, value) {
 			helper.toInt(DOM.css(element, 'width', value));
 		}
 		if ('content-box' === DOM.css(element, 'boxSizing')) {
-			return element.offsetWidth
-				- (helper.toInt(DOM.css(element, 'borderLeftWidth')) + helper.toInt(DOM.css(element, 'borderRightWidth')))
-				- (helper.toInt(DOM.css(element, 'paddingLeft')) + helper.toInt(DOM.css(element, 'paddingRight')));
+			return element.offsetWidth - (helper.toInt(DOM.css(element, 'borderLeftWidth')) + helper.toInt(DOM.css(element, 'borderRightWidth'))) - (helper.toInt(DOM.css(element, 'paddingLeft')) + helper.toInt(DOM.css(element, 'paddingRight')));
 		} else {
 			return element.offsetWidth
 		}
 
 	}
 };
-DOM.height = function (element, value) {
+DOM.height = function(element, value) {
 	if (typeof getComputedStyle !== 'undefined') {
 		return helper.toInt(DOM.css(element, 'height', value));
 	} else {
@@ -100,16 +98,14 @@ DOM.height = function (element, value) {
 			helper.toInt(DOM.css(element, 'height', value));
 		}
 		if ('content-box' === DOM.css(element, 'boxSizing')) {
-			return element.offsetHeight
-				- (helper.toInt(DOM.css(element, 'borderTopWidth')) + helper.toInt(DOM.css(element, 'borderBottomWidth')))
-				- (helper.toInt(DOM.css(element, 'paddingTop')) + helper.toInt(DOM.css(element, 'paddingBottom')));
+			return element.offsetHeight - (helper.toInt(DOM.css(element, 'borderTopWidth')) + helper.toInt(DOM.css(element, 'borderBottomWidth'))) - (helper.toInt(DOM.css(element, 'paddingTop')) + helper.toInt(DOM.css(element, 'paddingBottom')));
 		} else {
 			return element.offsetHeight;
 		}
 
 	}
 };
-DOM.matches = function (element, query) {
+DOM.matches = function(element, query) {
 	if (typeof element.matches !== 'undefined') {
 		return element.matches(query);
 	} else {
@@ -125,32 +121,32 @@ DOM.matches = function (element, query) {
 	}
 };
 
-DOM.queryChildren = function (element, selector) {
-	return Array.prototype.filter.call(element.childNodes, function (child) {
+DOM.queryChildren = function(element, selector) {
+	return Array.prototype.filter.call(element.childNodes, function(child) {
 		return DOM.matches(child, selector);
 	});
 };
-DOM.createEvent = function (name) {
+DOM.createEvent = function(name) {
 	var event;
 	if (document.createEvent) {
 		event = document.createEvent('Event');
 		event.initEvent(name, true, true);
-	}
-	if (document.createEventObject) {
-		event = document.createEventObject(name);
+	} else if (document.createEventObject) {
+		event = document.createEventObject();
 		event.type = name;
 	}
 	return event;
 };
-DOM.dispatchEvent = function (element, event) {
-	if (document.createEventObject) {
-		//element.fireEvent('on' + event.type);
-	} else if (element.dispatchEvent) {
+DOM.dispatchEvent = function(element, event) {
+
+	if (element.dispatchEvent) {
 		element.dispatchEvent(event);
+	} else if (element.fireEvent) {
+		//element.fireEvent('on' + event.type, event);
 	}
 };
 
-DOM.addClass = function (element, className) {
+DOM.addClass = function(element, className) {
 
 	if (element.classList) {
 		element.classList.add(className);
@@ -164,10 +160,10 @@ DOM.addClass = function (element, className) {
 
 };
 
-DOM.removeClass = function (element, className) {
+DOM.removeClass = function(element, className) {
 	var clses = className.split(' ');
 	if (clses.length > 1) {
-		clses.forEach(function (cls) {
+		clses.forEach(function(cls) {
 			DOM.removeClass(element, cls);
 		});
 	} else {
@@ -183,7 +179,7 @@ DOM.removeClass = function (element, className) {
 		}
 	}
 };
-DOM.listClass = function (element) {
+DOM.listClass = function(element) {
 	if (element.classList) {
 		return Array.prototype.slice.apply(element.classList);
 	} else {
@@ -191,10 +187,8 @@ DOM.listClass = function (element) {
 	}
 };
 
-DOM.hasClass = function (element, className) {
+DOM.hasClass = function(element, className) {
 	var cls = DOM.listClass(element);
 	return (cls.indexOf(className));
 };
-
-
 module.exports = DOM;

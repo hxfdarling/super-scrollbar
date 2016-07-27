@@ -9,11 +9,16 @@
 var instances = require('../instances');
 var updateBar = require('../update-bar');
 var update = require('../update');
+
 function bindNativeScroll(element) {
 	var instance = instances.get(element);
-	instance.event.on(element, 'scroll', function () {
-		if(instance.config.autoUpdate) {
-			update(element);
+	var buffer;
+	instance.event.on(element, 'scroll', function() {
+		if (instance.config.autoUpdate) {
+			clearTimeout(buffer);
+			buffer = setTimeout(function() {
+				update(element);
+			}, 500);
 		}
 		if (instance.animate.isDoing()) {
 			return;
@@ -22,10 +27,10 @@ function bindNativeScroll(element) {
 			instance.currentLeft = instance.getTrueLeft(element.scrollLeft);
 			instance.currentTop = instance.getTrueTop(element.scrollTop);
 			updateBar(element);
-		}
 
+		}
 	});
 }
-module.exports = function (element) {
+module.exports = function(element) {
 	bindNativeScroll(element);
 };

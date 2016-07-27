@@ -9,7 +9,7 @@
 var instances = require('../instances');
 var update = require('../update');
 var helper = require('../../lib/helper');
-
+var updateScroll = require('../update-scroll');
 function bindMouseWheelHandler(element, instance) {
 	var shouldPrevent = false;
 
@@ -114,7 +114,12 @@ function bindMouseWheelHandler(element, instance) {
 			}
 			perporty.left = {delta: newLeft};
 		}
-		instance.animate.run(perporty);
+		if (instance.config.animate) {
+			instance.animate.run(perporty);
+		} else {
+			perporty.top && updateScroll(element, 'top', instance.currentTop + perporty.top.delta);
+			perporty.left && updateScroll(element, 'left', instance.currentLeft + perporty.left.delta);
+		}
 
 		if (shouldPreventDefault(deltaX, deltaY)) {
 			helper.stopPropagation(e);

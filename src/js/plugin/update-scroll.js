@@ -10,20 +10,12 @@ var instances = require('./instances');
 var updateBar = require('./update-bar');
 var dom = require('../lib/dom');
 
-var upEvent = dom.createEvent('ss-scroll-up');
-var downEvent = dom.createEvent('ss-scroll-down');
-var leftEvent = dom.createEvent('ss-scroll-left');
-var rightEvent = dom.createEvent('ss-scroll-right');
 var yEvent = dom.createEvent('ss-scroll-y');
 var xEvent = dom.createEvent('ss-scroll-x');
-var xStartEvent = dom.createEvent('ss-x-reach-start');
-var xEndEvent = dom.createEvent('ss-x-reach-end');
-var yStartEvent = dom.createEvent('ss-y-reach-start');
-var yEndEvent = dom.createEvent('ss-y-reach-end');
 
 var lastTop;
 var lastLeft;
-module.exports = function (element, axis, value) {
+module.exports = function(element, axis, value) {
 	if (typeof element === 'undefined') {
 		throw 'You must provide an element to the update-scroll function';
 	}
@@ -37,13 +29,11 @@ module.exports = function (element, axis, value) {
 	}
 
 	if (axis === 'top' && value <= 0) {
-		element.scrollTop = value = 0; // don't allow negative scroll
-		dom.dispatchEvent(element, yStartEvent);
+		value = 0; // don't allow negative scroll
 	}
 
 	if (axis === 'left' && value <= 0) {
-		element.scrollLeft = value = 0; // don't allow negative scroll
-		dom.dispatchEvent(element, xStartEvent);
+		value = 0; // don't allow negative scroll
 	}
 
 	var instance = instances.get(element);
@@ -55,10 +45,7 @@ module.exports = function (element, axis, value) {
 			// mitigates rounding errors on non-subpixel scroll values
 			// fix edge buge
 			//value = element.scrollTop;
-		} else {
-			element.scrollTop = value;
 		}
-		dom.dispatchEvent(element, yEndEvent);
 	}
 
 	if (axis === 'left' && value >= instance.maxLeft) {
@@ -68,10 +55,7 @@ module.exports = function (element, axis, value) {
 			// mitigates rounding errors on non-subpixel scroll values
 			//fix edge buge
 			//value = element.scrollLeft;
-		} else {
-			element.scrollLeft = value;
 		}
-		dom.dispatchEvent(element, xEndEvent);
 	}
 
 	if (!lastTop) {
@@ -80,22 +64,6 @@ module.exports = function (element, axis, value) {
 
 	if (!lastLeft) {
 		lastLeft = element.scrollLeft;
-	}
-
-	if (axis === 'top' && value < lastTop) {
-		dom.dispatchEvent(element, upEvent);
-	}
-
-	if (axis === 'top' && value > lastTop) {
-		dom.dispatchEvent(element, downEvent);
-	}
-
-	if (axis === 'left' && value < lastLeft) {
-		dom.dispatchEvent(element, leftEvent);
-	}
-
-	if (axis === 'left' && value > lastLeft) {
-		dom.dispatchEvent(element, rightEvent);
 	}
 	if (axis === 'top') {
 		instance.currentTop = lastTop = value;

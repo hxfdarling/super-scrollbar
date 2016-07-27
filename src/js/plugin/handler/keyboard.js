@@ -9,7 +9,7 @@
 var instances = require('../instances');
 var update = require('../update');
 var helper = require('../../lib/helper');
-
+var updateScroll = require('../update-scroll');
 function bindKeyBoard(element) {
 	var instance = instances.get(element);
 	var key = {
@@ -87,14 +87,19 @@ function bindKeyBoard(element) {
 		if (shouldBeConsumedByChild(-deltaX, -deltaY)) {
 			return;
 		}
-		instance.animate.run({
-			top: {
-				delta: deltaY
-			},
-			left: {
-				delta: deltaX
-			}
-		});
+		if (instance.config.animate) {
+			instance.animate.run({
+				top: {
+					delta: deltaY
+				},
+				left: {
+					delta: deltaX
+				}
+			});
+		} else {
+			deltaY && updateScroll(element, 'top', instance.currentTop + deltaY);
+			deltaX && updateScroll(element, 'left', instance.currentLeft + deltaX);
+		}
 	});
 }
 module.exports = function (element) {

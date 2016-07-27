@@ -21,18 +21,18 @@ if (typeof define === 'function' && define.amd) {
 var helper = require('./helper');
 var DOM = {};
 
-DOM.element = function (tagName, className) {
+DOM.element = function(tagName, className) {
 	var element = document.createElement(tagName);
-	element.className = className;
+	className && (element.className = className);
 	return element;
 };
 
-DOM.appendTo = function (child, parent) {
+DOM.appendTo = function(child, parent) {
 	parent.appendChild(child);
 	return child;
 };
 
-DOM.remove = function (element) {
+DOM.remove = function(element) {
 	if (typeof element.remove !== 'undefined') {
 		element.remove();
 	} else {
@@ -42,12 +42,12 @@ DOM.remove = function (element) {
 	}
 };
 
-DOM.wrap = function (element, parent) {
+DOM.wrap = function(element, parent) {
 	var cp = element.parentNode;
 	parent.appendChild(element);
 	cp.appendChild(parent);
 };
-DOM.unwrap = function (element) {
+DOM.unwrap = function(element) {
 	var cp = element.parentNode;
 	var parent;
 	if (cp && cp.parentNode) {
@@ -82,7 +82,7 @@ function cssMultiSet(element, obj) {
 	return element;
 }
 
-DOM.css = function (element, styleNameOrObject, styleValue) {
+DOM.css = function(element, styleNameOrObject, styleValue) {
 	if (typeof styleNameOrObject === 'object') {
 		// multiple set with object
 		return cssMultiSet(element, styleNameOrObject);
@@ -94,7 +94,7 @@ DOM.css = function (element, styleNameOrObject, styleValue) {
 		}
 	}
 };
-DOM.width = function (element, value) {
+DOM.width = function(element, value) {
 	if (typeof getComputedStyle !== 'undefined') {
 		return helper.toInt(DOM.css(element, 'width', value));
 	} else {
@@ -102,16 +102,14 @@ DOM.width = function (element, value) {
 			helper.toInt(DOM.css(element, 'width', value));
 		}
 		if ('content-box' === DOM.css(element, 'boxSizing')) {
-			return element.offsetWidth
-				- (helper.toInt(DOM.css(element, 'borderLeftWidth')) + helper.toInt(DOM.css(element, 'borderRightWidth')))
-				- (helper.toInt(DOM.css(element, 'paddingLeft')) + helper.toInt(DOM.css(element, 'paddingRight')));
+			return element.offsetWidth - (helper.toInt(DOM.css(element, 'borderLeftWidth')) + helper.toInt(DOM.css(element, 'borderRightWidth'))) - (helper.toInt(DOM.css(element, 'paddingLeft')) + helper.toInt(DOM.css(element, 'paddingRight')));
 		} else {
 			return element.offsetWidth
 		}
 
 	}
 };
-DOM.height = function (element, value) {
+DOM.height = function(element, value) {
 	if (typeof getComputedStyle !== 'undefined') {
 		return helper.toInt(DOM.css(element, 'height', value));
 	} else {
@@ -119,16 +117,14 @@ DOM.height = function (element, value) {
 			helper.toInt(DOM.css(element, 'height', value));
 		}
 		if ('content-box' === DOM.css(element, 'boxSizing')) {
-			return element.offsetHeight
-				- (helper.toInt(DOM.css(element, 'borderTopWidth')) + helper.toInt(DOM.css(element, 'borderBottomWidth')))
-				- (helper.toInt(DOM.css(element, 'paddingTop')) + helper.toInt(DOM.css(element, 'paddingBottom')));
+			return element.offsetHeight - (helper.toInt(DOM.css(element, 'borderTopWidth')) + helper.toInt(DOM.css(element, 'borderBottomWidth'))) - (helper.toInt(DOM.css(element, 'paddingTop')) + helper.toInt(DOM.css(element, 'paddingBottom')));
 		} else {
 			return element.offsetHeight;
 		}
 
 	}
 };
-DOM.matches = function (element, query) {
+DOM.matches = function(element, query) {
 	if (typeof element.matches !== 'undefined') {
 		return element.matches(query);
 	} else {
@@ -144,32 +140,32 @@ DOM.matches = function (element, query) {
 	}
 };
 
-DOM.queryChildren = function (element, selector) {
-	return Array.prototype.filter.call(element.childNodes, function (child) {
+DOM.queryChildren = function(element, selector) {
+	return Array.prototype.filter.call(element.childNodes, function(child) {
 		return DOM.matches(child, selector);
 	});
 };
-DOM.createEvent = function (name) {
+DOM.createEvent = function(name) {
 	var event;
 	if (document.createEvent) {
 		event = document.createEvent('Event');
 		event.initEvent(name, true, true);
-	}
-	if (document.createEventObject) {
-		event = document.createEventObject(name);
+	} else if (document.createEventObject) {
+		event = document.createEventObject();
 		event.type = name;
 	}
 	return event;
 };
-DOM.dispatchEvent = function (element, event) {
-	if (document.createEventObject) {
-		//element.fireEvent('on' + event.type);
-	} else if (element.dispatchEvent) {
+DOM.dispatchEvent = function(element, event) {
+
+	if (element.dispatchEvent) {
 		element.dispatchEvent(event);
+	} else if (element.fireEvent) {
+		//element.fireEvent('on' + event.type, event);
 	}
 };
 
-DOM.addClass = function (element, className) {
+DOM.addClass = function(element, className) {
 
 	if (element.classList) {
 		element.classList.add(className);
@@ -183,10 +179,10 @@ DOM.addClass = function (element, className) {
 
 };
 
-DOM.removeClass = function (element, className) {
+DOM.removeClass = function(element, className) {
 	var clses = className.split(' ');
 	if (clses.length > 1) {
-		clses.forEach(function (cls) {
+		clses.forEach(function(cls) {
 			DOM.removeClass(element, cls);
 		});
 	} else {
@@ -202,7 +198,7 @@ DOM.removeClass = function (element, className) {
 		}
 	}
 };
-DOM.listClass = function (element) {
+DOM.listClass = function(element) {
 	if (element.classList) {
 		return Array.prototype.slice.apply(element.classList);
 	} else {
@@ -210,12 +206,10 @@ DOM.listClass = function (element) {
 	}
 };
 
-DOM.hasClass = function (element, className) {
+DOM.hasClass = function(element, className) {
 	var cls = DOM.listClass(element);
 	return (cls.indexOf(className));
 };
-
-
 module.exports = DOM;
 },{"./helper":6}],3:[function(require,module,exports){
 'use strict';
@@ -528,7 +522,7 @@ exports.env = {
 
 	var bind = function (fn, scope) {
 		return function () {
-			fn.apply(scope, arguments);
+			fn(scope);
 		}
 	};
 	/*
@@ -603,22 +597,22 @@ exports.env = {
 				}
 			}
 		},
-		_step: function (timestamp) {
-			this.beforeStep();
-			if (this.__stoped) {
+		_step: function (that) {
+			that.beforeStep();
+			if (that.__stoped) {
 				return
 			}
-			this.__doing = true;
+			that.__doing = true;
 			var hasFrame = 0;
 			var now = Date.now();
-			var duration = this.duration;
+			var duration = that.duration;
 			var delta, item, finished, elapsed, position, que, total;
-			for (var key in this.__frames) {
-				if (!this.__frames.hasOwnProperty(key)) {
+			for (var key in that.__frames) {
+				if (!that.__frames.hasOwnProperty(key)) {
 					return;
 				}
 				hasFrame++;
-				que = this.__frames[key];
+				que = that.__frames[key];
 				total = 0;
 				for (var i = 0; i < que.length; i++) {
 					item = que[i];
@@ -626,17 +620,17 @@ exports.env = {
 					finished = (elapsed >= duration);
 
 					// scroll position: [0, 1]
-					if (typeof this.timing == 'function') {
-						position = this.timing((finished) ? 1 : elapsed / duration);
+					if (typeof that.timing == 'function') {
+						position = that.timing((finished) ? 1 : elapsed / duration);
 					} else {
-						position = timing[this.timing]((finished) ? 1 : elapsed / duration);
+						position = timing[that.timing]((finished) ? 1 : elapsed / duration);
 					}
 
 
 					// only need the difference
 					delta = (item.delta * position - item.last) >> 0;
 
-					// add this to the total
+					// add that to the total
 					total += delta;
 
 					// update last values
@@ -649,16 +643,16 @@ exports.env = {
 					}
 				}
 
-				this.stepCallback(key, total);
+				that.stepCallback(key, total);
 				if (!que.length) {
-					delete this.__frames[key];
+					delete that.__frames[key];
 					hasFrame--;
 				}
 			}
 			if (hasFrame) {
-				requestAnimationFrameHelper.call(window, bind(this._step, this));
+				requestAnimationFrameHelper.call(window, bind(that._step, that));
 			} else {
-				this._stepEnd();
+				that._stepEnd();
 			}
 
 		}
@@ -777,19 +771,20 @@ module.exports = {
 'use strict';
 module.exports = {
 	handlers: ['click-rail', 'drag-bar', 'keyboard', 'wheel', 'touch', 'selection'],
-	wrapElement: false,//是否包裹滚动元素,可以解决在ie8，ie9下面滚动条抖动问题,但是会对被滚动元素包裹一层div
+	wrapElement: true, //是否包裹滚动元素,可以解决在ie8，ie9下面滚动条抖动问题,但是会对被滚动元素包裹一层div
+	animate: true,
 	/**
 	 *  scroll bar min size (height or width)
 	 */
 	barMinSize: 20,
 	wheelSpeed: 1,
-	keyScrollIncrement: 100,//key step
+	keyScrollIncrement: 100, //key step
 	autoHideBar: true,
 	stopPropagationOnClick: true,
 	wheelPropagation: true,
 	swipePropagation: true,
-	forceUpdate: true,//如果需要对textArea进行滚动操作，需要注意将wrapElement开启，并将此项关闭
-	autoUpdate: true//自动更新
+	forceUpdate: true, //如果需要对textArea进行滚动操作，需要注意将wrapElement开启，并将此项关闭
+	autoUpdate: true //自动更新
 };
 },{}],10:[function(require,module,exports){
 /**
@@ -824,6 +819,7 @@ module.exports = function (element) {
 var instances = require('../instances');
 var update = require('../update');
 var helper = require('../../lib/helper');
+var updateScroll = require('../update-scroll');
 function pageOffset(el) {
 	return el.getBoundingClientRect();
 }
@@ -854,9 +850,13 @@ function bindClickRailXHandler(element, instance) {
 			positionRatio = 1;
 		}
 		var left = ((instance.contentWidth - instance.containerWidth) * positionRatio);
-		instance.animate.run({
-			left: {delta: left - instance.currentLeft}
-		});
+		if (instance.config.animate) {
+			instance.animate.run({
+				left: {delta: left - instance.currentLeft}
+			});
+		} else {
+			updateScroll(element,'left',left);
+		}
 		helper.stopPropagation(e);
 	});
 }
@@ -883,9 +883,13 @@ function bindClickRailYHandler(element, instance) {
 			positionRatio = 1;
 		}
 		var top = (instance.contentHeight - instance.containerHeight) * positionRatio;
-		instance.animate.run({
-			top: {delta: top - instance.currentTop}
-		});
+		if(instance.config.animate) {
+			instance.animate.run({
+				top: {delta: top - instance.currentTop}
+			});
+		}else{
+			updateScroll(element,'top',top);
+		}
 		helper.stopPropagation(e);
 	});
 }
@@ -894,7 +898,7 @@ module.exports = function (element) {
 	bindClickRailXHandler(element, instance);
 	bindClickRailYHandler(element, instance);
 };
-},{"../../lib/helper":6,"../instances":19,"../update":22}],12:[function(require,module,exports){
+},{"../../lib/helper":6,"../instances":19,"../update":22,"../update-scroll":21}],12:[function(require,module,exports){
 /**
  * Created by z-man on 2016/7/21.
  * @class drag-scrollbar
@@ -993,7 +997,7 @@ module.exports = function (element) {
 var instances = require('../instances');
 var update = require('../update');
 var helper = require('../../lib/helper');
-
+var updateScroll = require('../update-scroll');
 function bindKeyBoard(element) {
 	var instance = instances.get(element);
 	var key = {
@@ -1071,20 +1075,25 @@ function bindKeyBoard(element) {
 		if (shouldBeConsumedByChild(-deltaX, -deltaY)) {
 			return;
 		}
-		instance.animate.run({
-			top: {
-				delta: deltaY
-			},
-			left: {
-				delta: deltaX
-			}
-		});
+		if (instance.config.animate) {
+			instance.animate.run({
+				top: {
+					delta: deltaY
+				},
+				left: {
+					delta: deltaX
+				}
+			});
+		} else {
+			deltaY && updateScroll(element, 'top', instance.currentTop + deltaY);
+			deltaX && updateScroll(element, 'left', instance.currentLeft + deltaX);
+		}
 	});
 }
 module.exports = function (element) {
 	bindKeyBoard(element);
 };
-},{"../../lib/helper":6,"../instances":19,"../update":22}],14:[function(require,module,exports){
+},{"../../lib/helper":6,"../instances":19,"../update":22,"../update-scroll":21}],14:[function(require,module,exports){
 /**
  * Created by z-man on 2016/7/21.
  * @class mouse-wheel
@@ -1096,7 +1105,7 @@ module.exports = function (element) {
 var instances = require('../instances');
 var update = require('../update');
 var helper = require('../../lib/helper');
-
+var updateScroll = require('../update-scroll');
 function bindMouseWheelHandler(element, instance) {
 	var shouldPrevent = false;
 
@@ -1201,7 +1210,12 @@ function bindMouseWheelHandler(element, instance) {
 			}
 			perporty.left = {delta: newLeft};
 		}
-		instance.animate.run(perporty);
+		if (instance.config.animate) {
+			instance.animate.run(perporty);
+		} else {
+			perporty.top && updateScroll(element, 'top', instance.currentTop + perporty.top.delta);
+			perporty.left && updateScroll(element, 'left', instance.currentLeft + perporty.left.delta);
+		}
 
 		if (shouldPreventDefault(deltaX, deltaY)) {
 			helper.stopPropagation(e);
@@ -1223,7 +1237,7 @@ module.exports = function (element) {
 	bindMouseWheelHandler(element, instance);
 };
 
-},{"../../lib/helper":6,"../instances":19,"../update":22}],15:[function(require,module,exports){
+},{"../../lib/helper":6,"../instances":19,"../update":22,"../update-scroll":21}],15:[function(require,module,exports){
 /**
  * Created by z-man on 2016/7/21.
  * @class native-scroll
@@ -1235,11 +1249,16 @@ module.exports = function (element) {
 var instances = require('../instances');
 var updateBar = require('../update-bar');
 var update = require('../update');
+
 function bindNativeScroll(element) {
 	var instance = instances.get(element);
-	instance.event.on(element, 'scroll', function () {
-		if(instance.config.autoUpdate) {
-			update(element);
+	var buffer;
+	instance.event.on(element, 'scroll', function() {
+		if (instance.config.autoUpdate) {
+			clearTimeout(buffer);
+			buffer = setTimeout(function() {
+				update(element);
+			}, 500);
 		}
 		if (instance.animate.isDoing()) {
 			return;
@@ -1248,11 +1267,11 @@ function bindNativeScroll(element) {
 			instance.currentLeft = instance.getTrueLeft(element.scrollLeft);
 			instance.currentTop = instance.getTrueTop(element.scrollTop);
 			updateBar(element);
-		}
 
+		}
 	});
 }
-module.exports = function (element) {
+module.exports = function(element) {
 	bindNativeScroll(element);
 };
 },{"../instances":19,"../update":22,"../update-bar":20}],16:[function(require,module,exports){
@@ -1268,7 +1287,12 @@ module.exports = function (element) {
 var helper = require('../../lib/helper');
 var instances = require('../instances');
 var dom = require('../../lib/dom');
+var updateScroll = require('../update-scroll');
 function bindSelectionHandler(element, instance) {
+	if (dom.css(element, 'overflow') === 'auto') {//本地滚动的selection修复
+		return;
+	}
+
 	function getRangeNode() {
 		var selection = window.getSelection ? window.getSelection() :
 			document.getSelection ? document.getSelection() : '';
@@ -1289,10 +1313,15 @@ function bindSelectionHandler(element, instance) {
 					clearInterval(scrollingLoop);
 					return;
 				}
-				instance.animate.run({
-					top: {delta: scrollDiff.top},
-					left: {delta: scrollDiff.left}
-				});
+				if (instance.config.animate) {
+					instance.animate.run({
+						top: {delta: scrollDiff.top},
+						left: {delta: scrollDiff.left}
+					});
+				} else {
+					scrollDiff.top && updateScroll(element, 'top', instance.currentTop + scrollDiff.top);
+					scrollDiff.left && updateScroll(element, 'left', instance.currentLeft + scrollDiff.left);
+				}
 			}, 50); // every .1 sec
 		}
 	}
@@ -1320,11 +1349,7 @@ function bindSelectionHandler(element, instance) {
 			mousedown = true;
 		});
 	}
-	if (dom.css(element, 'overflow') === 'auto') {//本地滚动的selection修复
-		instance.event.on(element, 'mousedown', function () {
-			dom.addClass(instance.wrapElement, 'selection');
-		});
-	}
+
 	instance.event.on(window, 'mouseup', function () {
 		mousedown = false;
 		if (isSelected) {
@@ -1397,7 +1422,7 @@ module.exports = function (element) {
 	bindSelectionHandler(element, i);
 };
 
-},{"../../lib/dom":2,"../../lib/helper":6,"../instances":19}],17:[function(require,module,exports){
+},{"../../lib/dom":2,"../../lib/helper":6,"../instances":19,"../update-scroll":21}],17:[function(require,module,exports){
 /**
  * Created by z-man on 2016/7/21.
  * @class touch
@@ -1906,20 +1931,12 @@ var instances = require('./instances');
 var updateBar = require('./update-bar');
 var dom = require('../lib/dom');
 
-var upEvent = dom.createEvent('ss-scroll-up');
-var downEvent = dom.createEvent('ss-scroll-down');
-var leftEvent = dom.createEvent('ss-scroll-left');
-var rightEvent = dom.createEvent('ss-scroll-right');
 var yEvent = dom.createEvent('ss-scroll-y');
 var xEvent = dom.createEvent('ss-scroll-x');
-var xStartEvent = dom.createEvent('ss-x-reach-start');
-var xEndEvent = dom.createEvent('ss-x-reach-end');
-var yStartEvent = dom.createEvent('ss-y-reach-start');
-var yEndEvent = dom.createEvent('ss-y-reach-end');
 
 var lastTop;
 var lastLeft;
-module.exports = function (element, axis, value) {
+module.exports = function(element, axis, value) {
 	if (typeof element === 'undefined') {
 		throw 'You must provide an element to the update-scroll function';
 	}
@@ -1933,13 +1950,11 @@ module.exports = function (element, axis, value) {
 	}
 
 	if (axis === 'top' && value <= 0) {
-		element.scrollTop = value = 0; // don't allow negative scroll
-		dom.dispatchEvent(element, yStartEvent);
+		value = 0; // don't allow negative scroll
 	}
 
 	if (axis === 'left' && value <= 0) {
-		element.scrollLeft = value = 0; // don't allow negative scroll
-		dom.dispatchEvent(element, xStartEvent);
+		value = 0; // don't allow negative scroll
 	}
 
 	var instance = instances.get(element);
@@ -1951,10 +1966,7 @@ module.exports = function (element, axis, value) {
 			// mitigates rounding errors on non-subpixel scroll values
 			// fix edge buge
 			//value = element.scrollTop;
-		} else {
-			element.scrollTop = value;
 		}
-		dom.dispatchEvent(element, yEndEvent);
 	}
 
 	if (axis === 'left' && value >= instance.maxLeft) {
@@ -1964,10 +1976,7 @@ module.exports = function (element, axis, value) {
 			// mitigates rounding errors on non-subpixel scroll values
 			//fix edge buge
 			//value = element.scrollLeft;
-		} else {
-			element.scrollLeft = value;
 		}
-		dom.dispatchEvent(element, xEndEvent);
 	}
 
 	if (!lastTop) {
@@ -1976,22 +1985,6 @@ module.exports = function (element, axis, value) {
 
 	if (!lastLeft) {
 		lastLeft = element.scrollLeft;
-	}
-
-	if (axis === 'top' && value < lastTop) {
-		dom.dispatchEvent(element, upEvent);
-	}
-
-	if (axis === 'top' && value > lastTop) {
-		dom.dispatchEvent(element, downEvent);
-	}
-
-	if (axis === 'left' && value < lastLeft) {
-		dom.dispatchEvent(element, leftEvent);
-	}
-
-	if (axis === 'left' && value > lastLeft) {
-		dom.dispatchEvent(element, rightEvent);
 	}
 	if (axis === 'top') {
 		instance.currentTop = lastTop = value;

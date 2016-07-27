@@ -56,7 +56,7 @@
 
 	var bind = function (fn, scope) {
 		return function () {
-			fn.apply(scope, arguments);
+			fn(scope);
 		}
 	};
 	/*
@@ -131,22 +131,22 @@
 				}
 			}
 		},
-		_step: function (timestamp) {
-			this.beforeStep();
-			if (this.__stoped) {
+		_step: function (that) {
+			that.beforeStep();
+			if (that.__stoped) {
 				return
 			}
-			this.__doing = true;
+			that.__doing = true;
 			var hasFrame = 0;
 			var now = Date.now();
-			var duration = this.duration;
+			var duration = that.duration;
 			var delta, item, finished, elapsed, position, que, total;
-			for (var key in this.__frames) {
-				if (!this.__frames.hasOwnProperty(key)) {
+			for (var key in that.__frames) {
+				if (!that.__frames.hasOwnProperty(key)) {
 					return;
 				}
 				hasFrame++;
-				que = this.__frames[key];
+				que = that.__frames[key];
 				total = 0;
 				for (var i = 0; i < que.length; i++) {
 					item = que[i];
@@ -154,17 +154,17 @@
 					finished = (elapsed >= duration);
 
 					// scroll position: [0, 1]
-					if (typeof this.timing == 'function') {
-						position = this.timing((finished) ? 1 : elapsed / duration);
+					if (typeof that.timing == 'function') {
+						position = that.timing((finished) ? 1 : elapsed / duration);
 					} else {
-						position = timing[this.timing]((finished) ? 1 : elapsed / duration);
+						position = timing[that.timing]((finished) ? 1 : elapsed / duration);
 					}
 
 
 					// only need the difference
 					delta = (item.delta * position - item.last) >> 0;
 
-					// add this to the total
+					// add that to the total
 					total += delta;
 
 					// update last values
@@ -177,16 +177,16 @@
 					}
 				}
 
-				this.stepCallback(key, total);
+				that.stepCallback(key, total);
 				if (!que.length) {
-					delete this.__frames[key];
+					delete that.__frames[key];
 					hasFrame--;
 				}
 			}
 			if (hasFrame) {
-				requestAnimationFrameHelper.call(window, bind(this._step, this));
+				requestAnimationFrameHelper.call(window, bind(that._step, that));
 			} else {
-				this._stepEnd();
+				that._stepEnd();
 			}
 
 		}

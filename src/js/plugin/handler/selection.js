@@ -10,7 +10,12 @@
 var helper = require('../../lib/helper');
 var instances = require('../instances');
 var dom = require('../../lib/dom');
+var updateScroll = require('../update-scroll');
 function bindSelectionHandler(element, instance) {
+	if (dom.css(element, 'overflow') === 'auto') {//本地滚动的selection修复
+		return;
+	}
+
 	function getRangeNode() {
 		var selection = window.getSelection ? window.getSelection() :
 			document.getSelection ? document.getSelection() : '';
@@ -31,10 +36,15 @@ function bindSelectionHandler(element, instance) {
 					clearInterval(scrollingLoop);
 					return;
 				}
-				instance.animate.run({
-					top: {delta: scrollDiff.top},
-					left: {delta: scrollDiff.left}
-				});
+				if (instance.config.animate) {
+					instance.animate.run({
+						top: {delta: scrollDiff.top},
+						left: {delta: scrollDiff.left}
+					});
+				} else {
+					scrollDiff.top && updateScroll(element, 'top', instance.currentTop + scrollDiff.top);
+					scrollDiff.left && updateScroll(element, 'left', instance.currentLeft + scrollDiff.left);
+				}
 			}, 50); // every .1 sec
 		}
 	}
@@ -62,11 +72,7 @@ function bindSelectionHandler(element, instance) {
 			mousedown = true;
 		});
 	}
-	if (dom.css(element, 'overflow') === 'auto') {//本地滚动的selection修复
-		instance.event.on(element, 'mousedown', function () {
-			dom.addClass(instance.wrapElement, 'selection');
-		});
-	}
+
 	instance.event.on(window, 'mouseup', function () {
 		mousedown = false;
 		if (isSelected) {

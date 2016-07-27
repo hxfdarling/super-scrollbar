@@ -9,6 +9,7 @@
 var instances = require('../instances');
 var update = require('../update');
 var helper = require('../../lib/helper');
+var updateScroll = require('../update-scroll');
 function pageOffset(el) {
 	return el.getBoundingClientRect();
 }
@@ -39,9 +40,13 @@ function bindClickRailXHandler(element, instance) {
 			positionRatio = 1;
 		}
 		var left = ((instance.contentWidth - instance.containerWidth) * positionRatio);
-		instance.animate.run({
-			left: {delta: left - instance.currentLeft}
-		});
+		if (instance.config.animate) {
+			instance.animate.run({
+				left: {delta: left - instance.currentLeft}
+			});
+		} else {
+			updateScroll(element,'left',left);
+		}
 		helper.stopPropagation(e);
 	});
 }
@@ -68,9 +73,13 @@ function bindClickRailYHandler(element, instance) {
 			positionRatio = 1;
 		}
 		var top = (instance.contentHeight - instance.containerHeight) * positionRatio;
-		instance.animate.run({
-			top: {delta: top - instance.currentTop}
-		});
+		if(instance.config.animate) {
+			instance.animate.run({
+				top: {delta: top - instance.currentTop}
+			});
+		}else{
+			updateScroll(element,'top',top);
+		}
 		helper.stopPropagation(e);
 	});
 }

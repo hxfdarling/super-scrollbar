@@ -64,6 +64,7 @@ body.scrolling {
   display: none;
   position: absolute;
   opacity: 0;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
   -webkit-transition: background-color .2s linear, opacity .2s linear;
   -moz-transition: background-color .2s linear, opacity .2s linear;
   -o-transition: background-color .2s linear, opacity .2s linear;
@@ -99,6 +100,7 @@ body.scrolling {
   display: none;
   position: absolute;
   opacity: 0;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
   -webkit-transition: background-color .2s linear, opacity .2s linear;
   -moz-transition: background-color .2s linear, opacity .2s linear;
   -o-transition: background-color .2s linear, opacity .2s linear;
@@ -135,14 +137,16 @@ body.scrolling {
 
 .super-scrollbar:hover.ss-in-scrolling.ss-x > .ss-scrollbar-x-rail {
   background-color: #eee;
-  opacity: 0.9; }
+  opacity: 0.9;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=90); }
 
 .super-scrollbar:hover.ss-in-scrolling.ss-x > .ss-scrollbar-x-rail > .ss-scrollbar-x {
   background-color: #999; }
 
 .super-scrollbar:hover.ss-in-scrolling.ss-y > .ss-scrollbar-y-rail {
   background-color: #eee;
-  opacity: 0.9; }
+  opacity: 0.9;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=90); }
 
 .super-scrollbar:hover.ss-in-scrolling.ss-y > .ss-scrollbar-y-rail > .ss-scrollbar-y {
   background-color: #999; }
@@ -153,18 +157,21 @@ body.scrolling {
 .super-scrollbar.touch > .ss-scrollbar-y-rail,
 .super-scrollbar:hover > .ss-scrollbar-x-rail,
 .super-scrollbar:hover > .ss-scrollbar-y-rail {
-  opacity: 0.6; }
+  opacity: 0.6;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60); }
 
 .super-scrollbar:hover > .ss-scrollbar-x-rail:hover {
   background-color: #eee;
-  opacity: 0.9; }
+  opacity: 0.9;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=90); }
 
 .super-scrollbar:hover > .ss-scrollbar-x-rail:hover > .ss-scrollbar-x {
   background-color: #999; }
 
 .super-scrollbar:hover > .ss-scrollbar-y-rail:hover {
   background-color: #eee;
-  opacity: 0.9; }
+  opacity: 0.9;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=90); }
 
 .super-scrollbar:hover > .ss-scrollbar-y-rail:hover > .ss-scrollbar-y {
   background-color: #999; }

@@ -8,7 +8,7 @@
 'use strict';
 module.exports = {
 	handlers: ['click-rail', 'drag-bar', 'keyboard', 'wheel', 'touch', 'selection'],
-	wrapElement: false,//是否包裹滚动元素,可以解决在ie8，ie9下面滚动条抖动问题,但是会对被滚动元素包裹一层div
+	wrapElement: true,//是否包裹滚动元素,可以解决在ie8，ie9下面滚动条抖动问题,但是会对被滚动元素包裹一层div
 	/**
 	 *  scroll bar min size (height or width)
 	 */

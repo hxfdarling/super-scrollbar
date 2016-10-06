@@ -19,9 +19,6 @@
 
 ## Installation
   
-  need npm cmd
-
-    $ npm install super-scrollbar
 
   With a stand-alone build
 

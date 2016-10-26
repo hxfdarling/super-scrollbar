@@ -1,17 +1,15 @@
 # super-scrollbar
-自定义滚动组件，支持chrome,edge,safari,fireFox,ie8及以上浏览器
+Custom scroll bar component supports chrome,edge,safari,fireFox,ie8+ browser
 
-完美实现了对触摸板、触屏、鼠标滚轮、鼠标拖拽、键盘事件的监控，媲美浏览器原生滚动
+Perfect realization of the touchpad, touch screen, drag the mouse wheel, mouse, keyboard events to monitor, comparable to the browser native scroll
 
-支持连级滚动，缓动滚动
+The original DOM tree without making any changes, just added a custom scrollbar element
 
-对原有dom树不做任何改动，仅增加了自定义滚动条元素
+Without any changes to the existing js code only be initialized once requires a custom scrolling region
 
-不用对原有的js代码做任何改动，仅需在对需要自定义滚动区域初始化一次即可
+Do not rely on any third party libraries
 
-不依赖与任何第三方库
-
-支持jquery插件调用
+Support jQuery plugin called
 
 ## About
 

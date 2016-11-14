@@ -28,7 +28,7 @@ module.exports = function (element, cfg) {
 	if (instances.get(element)) {
 		return;
 	}
-	var instance = instances.add(element, helper.apply(config, cfg));
+	var instance = instances.add(element, helper.apply(helper.clone(config), cfg));
 	instance.config.handlers.forEach(function (handlerName) {
 		handlers[handlerName](element);
 	});

@@ -8,8 +8,9 @@
 'use strict';
 var instances = require('./instances');
 var dom = require('../lib/dom');
-module.exports = function (element) {
-	var instance = instances.get(element), value;
+module.exports = function(element) {
+	var instance = instances.get(element),
+		value;
 	if (instance.barYActive) {
 		value = instance.currentTop;
 		dom.css(instance.barY, 'top', value / instance.railYRatio);

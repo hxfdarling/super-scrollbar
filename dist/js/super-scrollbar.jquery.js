@@ -1125,25 +1125,31 @@ function bindMouseWheelHandler(element, instance) {
 
 	function shouldPreventDefault(deltaX, deltaY) {
 		var scrollTop = element.scrollTop;
+		var scrollLeft = element.scrollLeft;
 		if (deltaX === 0) {
 			if (!instance.barYActive) {
+				/*x has instanced*/
+				if (instance.barXActive) {
+					if ((scrollLeft < instance.maxLeft && deltaY < 0) || (scrollLeft > 0 && deltaY > 0)) {
+						return !!instance.config.wheelPropagation;
+					}
+				}
 				return false;
 			}
-			if ((scrollTop === 0 && deltaY > 0) || (scrollTop >= instance.maxTop && deltaY < 0)) {
-				return !instance.config.wheelPropagation;
+			if ((scrollTop < instance.maxTop && deltaY < 0) || (scrollTop > 0 && deltaY > 0)) {
+				return !!instance.config.wheelPropagation;
 			}
 		}
 
-		var scrollLeft = element.scrollLeft;
 		if (deltaY === 0) {
 			if (!instance.barXActive) {
 				return false;
 			}
-			if ((scrollLeft === 0 && deltaX < 0) || (scrollLeft >= instance.maxLeft && deltaX > 0)) {
-				return !instance.config.wheelPropagation;
+			if ((scrollLeft < instance.maxLeft && deltaX < 0) || (scrollLeft > 0 && deltaX > 0)) {
+				return !!instance.config.wheelPropagation;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	function getDeltaFromEvent(e) {
@@ -1207,22 +1213,22 @@ function bindMouseWheelHandler(element, instance) {
 		}
 		shouldPrevent = false;
 		if (instance.barYActive && instance.barXActive) {
-			perporty.top = {delta: -(deltaY * instance.config.wheelSpeed)};
-			perporty.left = {delta: -(deltaX * instance.config.wheelSpeed)};
+			perporty.top = { delta: -(deltaY * instance.config.wheelSpeed) };
+			perporty.left = { delta: -(deltaX * instance.config.wheelSpeed) };
 		} else if (instance.barYActive && !instance.barXActive) {
 			if (deltaY) {
 				newTop = -(deltaY * instance.config.wheelSpeed)
 			} else {
 				newTop = -(deltaX * instance.config.wheelSpeed);
 			}
-			perporty.top = {delta: newTop};
+			perporty.top = { delta: newTop };
 		} else if (instance.barXActive && !instance.barYActive) {
 			if (deltaX) {
 				newLeft = -(deltaX * instance.config.wheelSpeed);
 			} else {
 				newLeft = -(deltaY * instance.config.wheelSpeed);
 			}
-			perporty.left = {delta: newLeft};
+			perporty.left = { delta: newLeft };
 		}
 		if (instance.config.animate) {
 			instance.animate.run(perporty);
@@ -1907,8 +1913,9 @@ exports.get = function (element) {
 'use strict';
 var instances = require('./instances');
 var dom = require('../lib/dom');
-module.exports = function (element) {
-	var instance = instances.get(element), value;
+module.exports = function(element) {
+	var instance = instances.get(element),
+		value;
 	if (instance.barYActive) {
 		value = instance.currentTop;
 		dom.css(instance.barY, 'top', value / instance.railYRatio);

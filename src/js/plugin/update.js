@@ -11,6 +11,7 @@ var instances = require('./instances');
 var helper = require('../lib/helper');
 var dom = require('../lib/dom');
 var updateScroll = require('./update-scroll');
+
 function updateRect(element, instance) {
 	if (instance.config.forceUpdate) {
 		//修复在chrome中overflow:hidden，情况下scrollHeight不能正确获取
@@ -26,6 +27,7 @@ function updateRect(element, instance) {
 	instance.containerWidth = element.clientWidth;
 	instance.containerHeight = element.clientHeight;
 }
+
 function updateHanlder(element, instance) {
 	instance.currentLeft = element.scrollLeft;
 	instance.currentTop = element.scrollTop;
@@ -70,7 +72,7 @@ function updateHanlder(element, instance) {
 		dom.removeClass(wrapElement, 'ss-active-y');
 	}
 }
-module.exports = function (element) {
+module.exports = function(element) {
 	var instance = instances.get(element);
 	if (!instance) {
 		return;

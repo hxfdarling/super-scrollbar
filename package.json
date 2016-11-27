@@ -1,6 +1,6 @@
 {
   "name": "super-scrollbar",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Custom scroll bar component supports chrome,edge,safari,fireFox,ie8+ browser",
   "main": "index.js",
   "repository": {

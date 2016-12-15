@@ -1,5 +1,5 @@
-/* super-scrollbar v1.0.0/
-*自定义滚动组件，支持chrome,edge,safari,fireFox,ie8及以上浏览器,拥有完善的事件支持：支持触控、触控板、鼠标滚轮、键盘滚动 */
+/* super-scrollbar v1.0.1/
+*Custom scroll bar component supports chrome,edge,safari,fireFox,ie8+ browser */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 

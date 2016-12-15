@@ -1,58 +1,55 @@
 {
-  "name": "super-scrollbar",
-  "version": "1.0.1",
-  "description": "Custom scroll bar component supports chrome,edge,safari,fireFox,ie8+ browser",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hxfdarling/super-scrollbar.git"
-  },
-  "keywords": [
-    "scroll",
-    "scrollbar",
-    "jquery-plugin"
-  ],
-  "author": "zman",
-  "contributors": [
-    {
-      "name": "zman",
-      "email": "hxfdarling@hotmail.com"
-    }
-  ],
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/hxfdarling/super-scrollbar/issues"
-  },
-  "homepage": "https://github.com/hxfdarling/super-scrollbar#readme",
-  "engines": {
-    "node": ">= 0.12.0"
-  },
-  "files": [
-    "dist",
-    "src",
-    "index.js",
-    "jquery.js"
-  ],
-  "devDependencies": {
-    "browserify": "^11.2.0",
-    "del": "^2.0.2",
-    "event-stream": "^3.3.1",
-    "gulp": "^3.9.0",
-    "gulp-autoprefixer": "^3.1.0",
-    "gulp-connect": "^2.2.0",
-    "gulp-eslint": "^1.0.0",
-    "gulp-insert": "^0.5.0",
-    "gulp-minify-css": "^1.2.4",
-    "gulp-rename": "^1.2.2",
-    "gulp-sass": "^2.0.4",
-    "gulp-uglify": "^1.4.1",
-    "gulp-zip": "^3.0.2",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
-  },
-  "scripts": {
-    "test": "gulp",
-    "before-deploy": "gulp && gulp compress",
-    "release": "rm -rf dist && gulp && npm publish"
-  }
+	"name": "super-scrollbar",
+	"version": "1.0.2",
+	"description": "Custom scroll bar component supports chrome,edge,safari,fireFox,ie8+ browser",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/hxfdarling/super-scrollbar.git"
+	},
+	"keywords": [
+		"scroll",
+		"scrollbar",
+		"jquery-plugin"
+	],
+	"author": "zman",
+	"contributors": [{
+		"name": "zman",
+		"email": "hxfdarling@hotmail.com"
+	}],
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/hxfdarling/super-scrollbar/issues"
+	},
+	"homepage": "https://github.com/hxfdarling/super-scrollbar#readme",
+	"engines": {
+		"node": ">= 0.12.0"
+	},
+	"files": [
+		"dist",
+		"src",
+		"index.js"
+	],
+	"devDependencies": {
+		"browserify": "^11.2.0",
+		"del": "^2.0.2",
+		"event-stream": "^3.3.1",
+		"gulp": "^3.9.0",
+		"gulp-autoprefixer": "^3.1.0",
+		"gulp-connect": "^2.2.0",
+		"gulp-eslint": "^1.0.0",
+		"gulp-insert": "^0.5.0",
+		"gulp-minify-css": "^1.2.4",
+		"gulp-rename": "^1.2.2",
+		"gulp-sass": "^2.0.4",
+		"gulp-uglify": "^1.4.1",
+		"gulp-zip": "^3.0.2",
+		"vinyl-buffer": "^1.0.0",
+		"vinyl-source-stream": "^1.1.0"
+	},
+	"scripts": {
+		"build": "rm -rf dist && gulp",
+		"before-deploy": "gulp && gulp compress",
+		"release": "rm -rf dist && gulp && npm publish"
+	}
 }

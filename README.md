@@ -17,28 +17,42 @@ Support jQuery plugin called
 
 ## Installation
   
+  you can install by npm:
+```
+npm install --save super-scrollbar
 
+```
   With a stand-alone build
-
-    <script src='super-scrollbar.js'></script>
-
+```html
+<link href="super-scrollbar.css" rel="stylesheet">
+<script src='super-scrollbar.js'></script>
+```
 
 ## Example
 
-	<script src='super-scrollbar.js'></script>
+sample
+```
+<link href="super-scrollbar.css" rel="stylesheet">
+<script src='super-scrollbar.js'></script>
+```
 
+  in webpack project:
+```js
+var SuperScrollbar = require('super-scrollbar');
+```
 ### initialize
-  
-    SuperScrollbar.initialize(document.querySelector('#id'));
-    
+
+```js
+SuperScrollbar.initialize(document.querySelector('#id'));
+```   
 ### update
-
-    SuperScrollbar.update(document.querySelector('#id'));
-    
+```js
+SuperScrollbar.update(document.querySelector('#id'));
+```
 ### destroy
-
-	SuperScrollbar.destroy(document.querySelector('#id'));	
-
+```js
+SuperScrollbar.destroy(document.querySelector('#id'));	
+```
 ### License
 
  Based on the [perfect-scrollbar](https://github.com/noraesae/perfect-scrollbar)

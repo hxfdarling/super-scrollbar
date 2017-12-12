@@ -52,7 +52,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 	var momentun = {
 		_doing: false,
 		duration: 300,
-		start: function (speed) {
+		start: function(speed) {
 			this.lastPosition = [0, 0];
 			this.startTime = new Date().getTime();
 			var frame = {
@@ -66,7 +66,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 			this._doing = true;
 			helper.requestAnimationFrameHelper.call(window, this.step.bind(this));
 		},
-		getPosition: function (t) {
+		getPosition: function(t) {
 			var speed = this._frame.speed;
 			var accelerate = this._frame.accelerate;
 			return [
@@ -74,7 +74,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 				speed.y == 0 ? 0 : (Math.pow(speed.y, 2) - Math.pow(speed.y - t * accelerate.y, 2)) / (2 * accelerate.y)
 			];
 		},
-		step: function () {
+		step: function() {
 			if (!this._doing) {
 				return;
 			}
@@ -92,7 +92,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 				helper.requestAnimationFrameHelper.call(window, this.step.bind(this));
 			}
 		},
-		end: function () {
+		end: function() {
 			this._doing = false;
 		}
 	}
@@ -200,15 +200,15 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 
 	if (supportsIePointer) {
 		if (window.PointerEvent) {
-			instance.event.on(window, 'touchstart', 'pointerdown', globalTouchStart);
-			instance.event.on(window, 'touchstart', 'pointerup', globalTouchEnd);
+			instance.event.on(window, 'pointerdown', globalTouchStart);
+			instance.event.on(window, 'pointerup', globalTouchEnd);
 
 			instance.event.on(element, 'pointerdown', touchStart);
 			instance.event.on(element, 'pointermove', touchMove);
 			instance.event.on(element, 'pointerup', touchEnd);
 		} else if (window.MSPointerEvent) {
-			instance.event.on(window, 'touchstart', 'MSPointerDown', globalTouchStart);
-			instance.event.on(window, 'touchstart', 'MSPointerUp', globalTouchEnd);
+			instance.event.on(window, 'MSPointerDown', globalTouchStart);
+			instance.event.on(window, 'MSPointerUp', globalTouchEnd);
 
 			instance.event.on(element, 'MSPointerDown', touchStart);
 			instance.event.on(element, 'MSPointerMove', touchMove);
@@ -217,7 +217,7 @@ function bindTouchHandler(element, instance, supportsTouch, supportsIePointer) {
 	}
 }
 
-module.exports = function (element) {
+module.exports = function(element) {
 	if (!helper.env.supportsTouch && !helper.env.supportsIePointer) {
 		return;
 	}
